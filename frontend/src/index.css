@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Smooth Scroll ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== Premium Design Tokens ===== */
+:root {
+  --brand-from: #3b82f6;
+  --brand-to: #6366f1;
+  --brand-accent: #8b5cf6;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg-dark: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.18);
+}
+
+/* ===== Nav Links ===== */
+.nav-link {
+  @apply text-sm font-medium tracking-wide transition-colors duration-300;
+  color: theme('colors.gray.600');
+}
+
+.nav-link:hover {
+  color: theme('colors.gray.900');
+}
+
+:is(.dark) .nav-link {
+  color: theme('colors.gray.300');
+}
+
+:is(.dark) .nav-link:hover {
+  color: theme('colors.white');
+}
+
+/* ===== Dropdown System ===== */
+.dropdown {
+  @apply absolute mt-2 w-44 rounded-xl shadow-2xl overflow-hidden;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+:is(.dark) .dropdown {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item {
+  @apply block px-4 py-2.5 text-sm transition-colors duration-150;
+  color: theme('colors.gray.600');
+}
+
+.dropdown-item:hover {
+  @apply bg-blue-50/70;
+  color: theme('colors.blue.600');
+}
+
+:is(.dark) .dropdown-item {
+  color: theme('colors.gray.300');
+}
+
+:is(.dark) .dropdown-item:hover {
+  @apply bg-white/10;
+  color: theme('colors.white');
+}
+
+/* ===== Page Entrance ===== */
+.page {
+  animation: fadeUp 0.45s ease-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Premium Card System ===== */
+.card {
+  @apply rounded-2xl p-6 transition-all duration-300;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+}
+
+:is(.dark) .card {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+}
+
+:is(.dark) .card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.38);
+}
+
+/* ===== Card Accent Line ===== */
+.card-accent::after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 0%;
+  margin-top: 16px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--brand-from), var(--brand-to), var(--brand-accent));
+  transition: width 0.35s ease;
+}
+
+.card-accent:hover::after {
+  width: 100%;
+}
+
+/* ===== Section Titles ===== */
+.section-title {
+  @apply text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white tracking-tight;
+}
+
+.section-subtitle {
+  @apply text-lg text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mt-4 leading-relaxed;
+}
+
+/* ===== Glassmorphism ===== */
+.glass {
+  backdrop-filter: blur(16px) saturate(180%);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+:is(.dark) .glass {
+  background: var(--glass-bg-dark);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Form Input System ===== */
+.input {
+  @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200;
+}
+
+.input:focus {
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* ===== Primary Button ===== */
+.btn-primary {
+  @apply inline-flex items-center justify-center py-3 px-8 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+/* ===== Secondary Button ===== */
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-8 py-3 rounded-xl font-semibold border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-white/60 dark:hover:bg-white/5 hover:border-gray-400 dark:hover:border-gray-500 hover:-translate-y-0.5 transition-all duration-300;
+}
+
+/* ===== Gradient Text ===== */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500;
+}
+
+/* ===== Custom Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* ===== Animated Gradient Background ===== */
+.gradient-bg {
+  background: linear-gradient(-45deg, #e0e7ff, #f0f5ff, #ede9fe, #e8e0ff);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+:is(.dark) .gradient-bg {
+  background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0f172a, #1a1a2e);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ===== Animate Fade (for dropdowns) ===== */
+.animate-fade {
+  animation: fade 0.2s ease-out;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

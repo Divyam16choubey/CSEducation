@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Monitor -->
+  <rect x="180" y="120" width="280" height="190" rx="14" fill="#4FA8A8" stroke="#1F3A3A" stroke-width="8"></rect>
+
+  <!-- Screen -->
+  <rect x="200" y="140" width="240" height="150" rx="8" fill="#8A8CA5"></rect>
+
+  <!-- Screen reflection -->
+  <polygon points="210,150 260,150 380,290 330,290" fill="#ffffff" opacity="0.35"></polygon>
+
+  <!-- Stand -->
+  <rect x="300" y="310" width="40" height="40" fill="#4FA8A8"></rect>
+  <ellipse cx="320" cy="360" rx="80" ry="20" fill="#4FA8A8" stroke="#1F3A3A" stroke-width="6"></ellipse>
+
+  <!-- CPU Cabinet -->
+  <rect x="60" y="120" width="110" height="260" rx="18" fill="#3F9E9E" stroke="#1F3A3A" stroke-width="8"></rect>
+
+  <!-- Drive slots -->
+  <rect x="80" y="150" width="70" height="24" fill="#A6DADA"></rect>
+  <rect x="80" y="200" width="70" height="24" fill="#A6DADA"></rect>
+
+  <!-- Power button -->
+  <circle cx="115" cy="310" r="22" fill="#FFD34D"></circle>
+  <circle cx="115" cy="310" r="10" fill="#2D2D2D"></circle>
+
+  <!-- Mouse -->
+  <ellipse cx="210" cy="380" rx="32" ry="22" fill="#FFA726" stroke="#1F3A3A" stroke-width="6"></ellipse>
+
+</svg>
