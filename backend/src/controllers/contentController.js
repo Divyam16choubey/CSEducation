@@ -2,6 +2,8 @@ const Semester = require("../models/Semester");
 const Subject = require("../models/Subject");
 const Resource = require("../models/Resource");
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // ── Semesters ──
 
 exports.getSemesters = async (req, res) => {
@@ -60,8 +62,15 @@ exports.addSubject = async (req, res) => {
 exports.getResources = async (req, res) => {
     try {
         const { subjectId } = req.params;
-        const resources = await Resource.find({ subject: subjectId }).sort({
+        const subjectName = subjectId.replace(/-/g, " ");
+        const resources = await Resource.find({
+            $or: [
+                { subject: new RegExp(`^${escapeRegex(subjectId)}$`, "i") },
+                { subject: new RegExp(`^${escapeRegex(subjectName)}$`, "i") },
+            ],
+        }).sort({
             type: 1,
+            title: 1,
         });
         res.json(resources);
     } catch (error) {

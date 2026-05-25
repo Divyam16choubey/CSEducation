@@ -34,30 +34,30 @@ CSE students face a recurring problem: study materials are scattered across mult
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    CLIENT (Browser)                      │
-│              React + Tailwind CSS + Vite                 │
+│                    CLIENT (Browser)                     │
+│              React + Tailwind CSS + Vite                │
 ├─────────────────────────────────────────────────────────┤
-│                  Axios HTTP Client                       │
-│            (JWT Token in Authorization Header)           │
+│                  Axios HTTP Client                      │
+│            (JWT Token in Authorization Header)          │
 ├─────────────────┬───────────────────────────────────────┤
-│                 │  REST API (HTTP)                       │
-│                 ▼                                        │
-│         EXPRESS.JS SERVER (Node.js)                      │
-│    ┌────────────────────────────────┐                    │
-│    │  Routes → Controllers          │                    │
-│    │  Middleware (Auth, CORS)        │                    │
-│    └────────────┬───────────────────┘                    │
-│                 │  Mongoose ODM                          │
-│                 ▼                                        │
-│           MONGODB DATABASE                               │
-│    ┌────────────────────────────────┐                    │
-│    │  Collections:                   │                    │
-│    │  - admins                       │                    │
-│    │  - semesters                    │                    │
-│    │  - subjects                     │                    │
-│    │  - resources                    │                    │
-│    │  - contacts                     │                    │
-│    └────────────────────────────────┘                    │
+│                 │  REST API (HTTP)                      │
+│                 ▼                                       │
+│         EXPRESS.JS SERVER (Node.js)                     │
+│    ┌────────────────────────────────┐                   │
+│    │  Routes → Controllers          │                   │
+│    │  Middleware (Auth, CORS)        │                  │
+│    └────────────┬───────────────────┘                   │
+│                 │  Mongoose ODM                         │
+│                 ▼                                       │
+│           MONGODB DATABASE                              │
+│    ┌────────────────────────────────┐                   │
+│    │  Collections:                  │                   │
+│    │  - admins                      │                   │
+│    │  - semesters                   │                   │
+│    │  - subjects                    │                   │
+│    │  - resources                   │                   │
+│    │  - contacts                    │                   │
+│    └────────────────────────────────┘                   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -76,40 +76,54 @@ CSE students face a recurring problem: study materials are scattered across mult
 
 ### Folder Structure
 ```
-frontend/src/
-├── animations/       # Framer Motion animation presets
-│   └── motion.js
-├── api/              # Axios service layer
-│   ├── api.js        # Axios instance with interceptors
-│   ├── adminService.js
-│   ├── contentService.js
-│   └── contactService.js
-├── components/       # Reusable UI components
-│   ├── Navbar.jsx
-│   ├── Footer.jsx
-│   ├── Breadcrumb.jsx
-│   ├── SubjectCard.jsx
-│   ├── ResourceCard.jsx
-│   ├── SkeletonCard.jsx
-│   ├── ScrollProgress.jsx
-│   └── ProtectedRoute.jsx
-├── hooks/            # Custom React hooks
-│   └── useApi.js
-├── pages/            # Route-level page components
-│   ├── Home.jsx
-│   ├── About.jsx
-│   ├── Contact.jsx
-│   ├── SemesterLanding.jsx
-│   ├── SemesterPage.jsx
-│   ├── SubjectPage.jsx
-│   ├── PYQLanding.jsx
-│   ├── PYQPage.jsx
-│   ├── AdminLogin.jsx
-│   ├── AdminDashboard.jsx
-│   └── NotFound.jsx
-├── App.jsx           # Root component with routes
-├── main.jsx          # Entry point
-└── index.css         # Global styles and design system
+frontend/
++-- public/
+�   +-- vite.svg
++-- src/
+�   +-- animations/
+�   �   +-- motion.js
+�   +-- api/
+�   �   +-- api.js
+�   �   +-- adminService.js
+�   �   +-- contentService.js
+�   �   +-- contactService.js
+�   �   +-- subjectApi.js
+�   +-- assets/
+�   �   +-- react.svg
+�   +-- components/
+�   �   +-- Navbar.jsx
+�   �   +-- Footer.jsx
+�   �   +-- Breadcrumb.jsx
+�   �   +-- SubjectCard.jsx
+�   �   +-- ResourceCard.jsx
+�   �   +-- SkeletonCard.jsx
+�   �   +-- ScrollProgress.jsx
+�   �   +-- ProtectedRoute.jsx
+�   +-- data/
+�   �   +-- semesterSubjects.js
+�   +-- hooks/
+�   �   +-- useApi.js
+�   +-- pages/
+�   �   +-- Home.jsx
+�   �   +-- About.jsx
+�   �   +-- Contact.jsx
+�   �   +-- SemesterLanding.jsx
+�   �   +-- SemesterPage.jsx
+�   �   +-- SubjectPage.jsx
+�   �   +-- PYQLanding.jsx
+�   �   +-- PYQPage.jsx
+�   �   +-- AdminLogin.jsx
+�   �   +-- AdminDashboard.jsx
+�   �   +-- NotFound.jsx
+�   +-- App.jsx
+�   +-- main.jsx
+�   +-- index.css
++-- index.html
++-- package.json
++-- tailwind.config.js
++-- postcss.config.js
++-- eslint.config.js
++-- vite.config.js
 ```
 
 ### Design System
@@ -148,26 +162,33 @@ React Router DOM handles client-side navigation:
 
 ### Folder Structure
 ```
-backend/src/
-├── config/
-│   └── db.js           # MongoDB connection logic
-├── models/
-│   ├── Admin.js        # Admin user schema
-│   ├── Semester.js     # Semester schema
-│   ├── Subject.js      # Subject schema
-│   ├── Resource.js     # Resource schema (notes, books, PYQs, references)
-│   └── Contact.js      # Contact message schema
-├── controllers/
-│   ├── adminController.js    # Registration & login logic
-│   ├── contentController.js  # CRUD for semesters, subjects, resources
-│   └── contactController.js  # Contact form submission & listing
-├── routes/
-│   ├── adminRoutes.js
-│   ├── contentRoutes.js
-│   └── contactRoutes.js
-├── middleware/
-│   └── authMiddleware.js     # JWT verification middleware
-└── server.js                 # Express app entry point
+backend/
++-- src/
+�   +-- config/
+�   �   +-- db.js
+�   +-- controllers/
+�   �   +-- adminController.js
+�   �   +-- contentController.js
+�   �   +-- contactController.js
+�   �   +-- subjectController.js
+�   +-- middleware/
+�   �   +-- authMiddleware.js
+�   +-- models/
+�   �   +-- Admin.js
+�   �   +-- Semester.js
+�   �   +-- Subject.js
+�   �   +-- Resource.js
+�   �   +-- Contact.js
+�   +-- routes/
+�   �   +-- adminRoutes.js
+�   �   +-- contentRoutes.js
+�   �   +-- contactRoutes.js
+�   �   +-- subjectRoutes.js
+�   +-- scripts/
+�   �   +-- createAdmin.js
+�   +-- server.js
++-- package.json
++-- package-lock.json
 ```
 
 ### API Endpoints
@@ -303,3 +324,5 @@ CSEducation demonstrates a production-grade implementation of the MERN stack, so
 - **Scalable design** ready for feature expansion and deployment
 
 The platform is designed to be immediately useful for students while remaining maintainable and extensible for future development.
+
+

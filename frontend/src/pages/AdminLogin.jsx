@@ -19,7 +19,7 @@ export default function AdminLogin() {
       toast.success("Login successful!");
       navigate("/admin/dashboard");
     } catch (err) {
-      toast.error(err.message || "Invalid credentials");
+      toast.error(err?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

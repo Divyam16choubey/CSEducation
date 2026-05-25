@@ -1,1 +1,75 @@
+# =========================
+# Dependencies
+# =========================
 node_modules/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# Logs
+# =========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Runtime Data
+# =========================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Build / Production
+# =========================
+dist/
+build/
+
+# =========================
+# Vite Cache / Temp Files
+# =========================
+vite.config.js.timestamp-*.mjs
+.vite/
+
+# =========================
+# Coverage
+# =========================
+coverage/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor Files
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env.python
+
+# =========================
+# Misc
+# =========================
+*.tmp
+*.temp

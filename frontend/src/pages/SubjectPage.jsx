@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaGlobe, FaYoutube } from "react-icons/fa";
 import Breadcrumb from "../components/Breadcrumb";
 import ResourceCard from "../components/ResourceCard";
 import SkeletonCard from "../components/SkeletonCard";
+import { getResources } from "../api/contentService";
 import { fetchSubjectBySlug } from "../api/subjectApi";
 import { staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
@@ -15,10 +17,33 @@ const typeConfig = {
   referenceLinks: { icon: "🔗", label: "Reference Links" },
 };
 
+const resourceTypeToSection = {
+  notes: "notesLinks",
+  "teacher-notes": "teacherNotesLinks",
+  pyqs: "pyqLinks",
+  books: "bookLinks",
+  reference: "referenceLinks",
+};
+
+const getReferenceIcon = (url) => {
+  try {
+    const hostname = new URL(url).hostname.replace(/^www\./, "");
+    const isYouTube = hostname === "youtube.com" || hostname === "youtu.be" || hostname.endsWith(".youtube.com");
+
+    return isYouTube
+      ? <FaYoutube className="text-red-600" aria-label="YouTube" />
+      : <FaGlobe className="text-blue-600 dark:text-blue-400" aria-label="Website" />;
+  } catch {
+    return <FaGlobe className="text-blue-600 dark:text-blue-400" aria-label="Website" />;
+  }
+};
+
 export default function SubjectPage() {
   const { id } = useParams();
   const displayName = id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const { data: subject, loading, error } = useApi(() => fetchSubjectBySlug(id), [id]);
+  const { data: subject, loading: subjectLoading, error: subjectError } = useApi(() => fetchSubjectBySlug(id), [id]);
+  const { data: uploadedResources, loading: resourcesLoading, error: resourcesError } = useApi(() => getResources(id), [id]);
+  const loading = subjectLoading || resourcesLoading;
 
   const breadcrumbItems = [
     { label: "Home", to: "/" },
@@ -28,39 +53,61 @@ export default function SubjectPage() {
 
   // Build grouped sections from subject document arrays
   const sections = [];
+  const addSectionResources = (key, resources) => {
+    const existing = sections.find((section) => section.key === key);
+    if (existing) {
+      existing.resources.push(...resources);
+      return;
+    }
+
+    sections.push({
+      ...typeConfig[key],
+      key,
+      resources,
+    });
+  };
+
   if (subject) {
     // Simple link arrays (notes, teacher notes, pyqs, books)
     for (const [key, cfg] of Object.entries(typeConfig)) {
       if (key === "referenceLinks") continue; // handle separately
       const links = subject[key];
       if (links && links.length > 0) {
-        sections.push({
-          ...cfg,
-          key,
-          resources: links.map((url, i) => ({
+        addSectionResources(key, links.map((url, i) => ({
             _id: `${key}-${i}`,
             title: `${cfg.label} ${i + 1}`,
             url,
-          })),
-        });
+          })));
       }
     }
 
     // Reference links (objects with title + url)
     if (subject.referenceLinks && subject.referenceLinks.length > 0) {
-      sections.push({
-        ...typeConfig.referenceLinks,
-        key: "referenceLinks",
-        resources: subject.referenceLinks.map((ref, i) => ({
+      addSectionResources("referenceLinks", subject.referenceLinks.map((ref, i) => ({
           _id: `ref-${i}`,
           title: ref.title || `Reference ${i + 1}`,
           url: ref.url,
-        })),
-      });
+          icon: getReferenceIcon(ref.url),
+        })));
     }
   }
 
+  if (uploadedResources && uploadedResources.length > 0) {
+    uploadedResources.forEach((resource) => {
+      const sectionKey = resourceTypeToSection[resource.type];
+      if (!sectionKey) return;
+
+      addSectionResources(sectionKey, [{
+        _id: resource._id,
+        title: resource.title,
+        url: resource.url,
+        icon: sectionKey === "referenceLinks" ? getReferenceIcon(resource.url) : undefined,
+      }]);
+    });
+  }
+
   const hasResources = sections.length > 0;
+  const error = !hasResources ? subjectError || resourcesError : resourcesError;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -107,7 +154,7 @@ export default function SubjectPage() {
                         key={r._id}
                         label={r.title}
                         href={r.url}
-                        icon={section.icon}
+                        icon={r.icon || section.icon}
                       />
                     ))}
                   </motion.div>

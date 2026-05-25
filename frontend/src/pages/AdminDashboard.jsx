@@ -8,6 +8,7 @@ import {
   addPYQ,
 } from "../api/contentService";
 import { createSubject } from "../api/subjectApi";
+import { semesterSubjects, toSlug } from "../data/semesterSubjects";
 import toast from "react-hot-toast";
 
 const sidebarItems = [
@@ -240,7 +241,7 @@ function ResourceForm({ type, label }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await addResource({ title, type, url, subject, semester: semester ? Number(semester) : undefined });
+      await addResource({ title, type, url, subject, semester: Number(semester) });
       toast.success(`${label} saved!`);
       setTitle(""); setUrl(""); setSubject(""); setSemester("");
     } catch (err) { toast.error(err.message || "Failed"); }
@@ -254,10 +255,8 @@ function ResourceForm({ type, label }) {
           value={title} onChange={setTitle} disabled={loading} required />
         <FormInput label="URL" type="url" placeholder="Google Drive / URL"
           value={url} onChange={setUrl} disabled={loading} required />
-        <FormInput label="Subject Slug" placeholder="e.g. data-structures (optional)"
-          value={subject} onChange={setSubject} disabled={loading} />
-        <FormInput label="Semester" type="number" min="1" max="8"
-          placeholder="1-8 (optional)" value={semester} onChange={setSemester} disabled={loading} />
+        <SemesterSelect value={semester} onChange={(value) => { setSemester(value); setSubject(""); }} disabled={loading} required />
+        <SubjectSelect semester={semester} value={subject} onChange={setSubject} disabled={loading} required />
         <button type="submit" disabled={loading} className="btn-primary">
           {loading ? "Saving…" : `Save ${label}`}
         </button>
@@ -293,8 +292,7 @@ function PYQForm() {
           value={url} onChange={setUrl} disabled={loading} required />
         <FormInput label="Year" type="number" min="2000" max="2100"
           placeholder="e.g. 2024" value={year} onChange={setYear} disabled={loading} required />
-        <FormInput label="Semester" type="number" min="1" max="8"
-          placeholder="1-8 (optional)" value={semester} onChange={setSemester} disabled={loading} />
+        <SemesterSelect value={semester} onChange={setSemester} disabled={loading} />
         <button type="submit" disabled={loading} className="btn-primary">
           {loading ? "Saving…" : "Save PYQ"}
         </button>
@@ -314,8 +312,6 @@ function SubjectResourceForm() {
   const [refTitle, setRefTitle] = useState("");
   const [refUrl, setRefUrl] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const toSlug = (name) => name.replace(/\s+/g, "-").toLowerCase();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -350,22 +346,21 @@ function SubjectResourceForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Semester</label>
-          <select className="input" value={semester} onChange={(e) => setSemester(e.target.value)} disabled={loading} required>
+          <select className="input" value={semester} onChange={(e) => { setSemester(e.target.value); setSubjectName(""); }} disabled={loading} required>
             <option value="">Select Semester</option>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <option key={n} value={n}>Semester {n}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject Type</label>
-          <select className="input" value={subjectType} onChange={(e) => setSubjectType(e.target.value)} disabled={loading}>
+          <select className="input" value={subjectType} onChange={(e) => { setSubjectType(e.target.value); setSubjectName(""); }} disabled={loading}>
             <option value="theory">Theory</option>
             <option value="lab">Lab</option>
             <option value="project">Project</option>
             <option value="elective">Elective</option>
           </select>
         </div>
-        <FormInput label="Subject Name" placeholder="e.g. Data Structures"
-          value={subjectName} onChange={setSubjectName} disabled={loading} required />
+        <SubjectSelect semester={semester} type={subjectType} value={subjectName} onChange={setSubjectName} disabled={loading} required />
 
         <div className="h-px bg-gray-200 dark:bg-gray-700 my-2" />
         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Resource Links (optional — add any combination)</p>
@@ -404,6 +399,41 @@ function FormMotion({ title, children }) {
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">{title}</h2>
       {children}
     </motion.div>
+  );
+}
+
+function SemesterSelect({ value, onChange, disabled, required }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Semester</label>
+      <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required}>
+        <option value="">Select Semester</option>
+        {Object.keys(semesterSubjects).map((semester) => (
+          <option key={semester} value={semester}>Semester {semester}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function SubjectSelect({ semester, type, value, onChange, disabled, required }) {
+  const config = semesterSubjects[Number(semester)] || {};
+  const groups = Object.entries(config).filter(([key]) => !type || key === type);
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject</label>
+      <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled || !semester} required={required}>
+        <option value="">{semester ? "Select Subject" : "Select semester first"}</option>
+        {groups.map(([group, subjects]) => (
+          <optgroup key={group} label={group.charAt(0).toUpperCase() + group.slice(1)}>
+            {subjects.map((subjectName) => (
+              <option key={`${group}-${subjectName}`} value={subjectName}>{subjectName}</option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </div>
   );
 }
 
