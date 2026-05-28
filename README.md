@@ -45,7 +45,7 @@ CSE students face a recurring problem: study materials are scattered across mult
 │         EXPRESS.JS SERVER (Node.js)                     │
 │    ┌────────────────────────────────┐                   │
 │    │  Routes → Controllers          │                   │
-│    │  Middleware (Auth, CORS)        │                  │
+│    │  Middleware (Auth, CORS)       │                   │
 │    └────────────┬───────────────────┘                   │
 │                 │  Mongoose ODM                         │
 │                 ▼                                       │
@@ -75,59 +75,62 @@ CSE students face a recurring problem: study materials are scattered across mult
 - **React Hot Toast** — Toast notification system
 
 ### Folder Structure
-```
+
+```text
 frontend/
-+-- public/
-�   +-- vite.svg
-+-- src/
-�   +-- animations/
-�   �   +-- motion.js
-�   +-- api/
-�   �   +-- api.js
-�   �   +-- adminService.js
-�   �   +-- contentService.js
-�   �   +-- contactService.js
-�   �   +-- subjectApi.js
-�   +-- assets/
-�   �   +-- react.svg
-�   +-- components/
-�   �   +-- Navbar.jsx
-�   �   +-- Footer.jsx
-�   �   +-- Breadcrumb.jsx
-�   �   +-- SubjectCard.jsx
-�   �   +-- ResourceCard.jsx
-�   �   +-- SkeletonCard.jsx
-�   �   +-- ScrollProgress.jsx
-�   �   +-- ProtectedRoute.jsx
-�   +-- data/
-�   �   +-- semesterSubjects.js
-�   +-- hooks/
-�   �   +-- useApi.js
-�   +-- pages/
-�   �   +-- Home.jsx
-�   �   +-- About.jsx
-�   �   +-- Contact.jsx
-�   �   +-- SemesterLanding.jsx
-�   �   +-- SemesterPage.jsx
-�   �   +-- SubjectPage.jsx
-�   �   +-- PYQLanding.jsx
-�   �   +-- PYQPage.jsx
-�   �   +-- AdminLogin.jsx
-�   �   +-- AdminDashboard.jsx
-�   �   +-- NotFound.jsx
-�   +-- App.jsx
-�   +-- main.jsx
-�   +-- index.css
-+-- index.html
-+-- package.json
-+-- tailwind.config.js
-+-- postcss.config.js
-+-- eslint.config.js
-+-- vite.config.js
+├── public/
+│   └── vite.svg
+├── src/
+│   ├── animations/
+│   │   └── motion.js
+│   ├── api/
+│   │   ├── api.js
+│   │   ├── adminService.js
+│   │   ├── contentService.js
+│   │   ├── contactService.js
+│   │   └── subjectApi.js
+│   ├── assets/
+│   │   └── react.svg
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Breadcrumb.jsx
+│   │   ├── SubjectCard.jsx
+│   │   ├── ResourceCard.jsx
+│   │   ├── SkeletonCard.jsx
+│   │   ├── ScrollProgress.jsx
+│   │   └── ProtectedRoute.jsx
+│   ├── data/
+│   │   └── semesterSubjects.js
+│   ├── hooks/
+│   │   └── useApi.js
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── About.jsx
+│   │   ├── Contact.jsx
+│   │   ├── SemesterLanding.jsx
+│   │   ├── SemesterPage.jsx
+│   │   ├── SubjectPage.jsx
+│   │   ├── PYQLanding.jsx
+│   │   ├── PYQPage.jsx
+│   │   ├── AdminLogin.jsx
+│   │   ├── AdminDashboard.jsx
+│   │   └── NotFound.jsx
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── index.html
+├── package.json
+├── tailwind.config.js
+├── postcss.config.js
+├── eslint.config.js
+└── vite.config.js
 ```
 
 ### Design System
+
 The application uses a custom CSS design system built on top of Tailwind CSS:
+
 - **Premium Card System** — Glassmorphism-inspired cards with hover effects
 - **Gradient Accents** — Blue-to-indigo-to-purple gradient palette
 - **Animated Backgrounds** — Subtle gradient shift animations
@@ -135,7 +138,9 @@ The application uses a custom CSS design system built on top of Tailwind CSS:
 - **Custom Scrollbar** — Styled scrollbar matching the brand colors
 
 ### Routing
+
 React Router DOM handles client-side navigation:
+
 - `/` — Home page
 - `/semester` — Semester selection
 - `/semester/:id` — Subjects for a semester
@@ -153,6 +158,7 @@ React Router DOM handles client-side navigation:
 ## 6. Backend Architecture
 
 ### Technology Stack
+
 - **Node.js** — JavaScript runtime
 - **Express.js** — Web application framework
 - **MongoDB** — NoSQL document database
@@ -161,53 +167,56 @@ React Router DOM handles client-side navigation:
 - **bcryptjs** — Password hashing
 
 ### Folder Structure
-```
+
+```text
 backend/
-+-- src/
-�   +-- config/
-�   �   +-- db.js
-�   +-- controllers/
-�   �   +-- adminController.js
-�   �   +-- contentController.js
-�   �   +-- contactController.js
-�   �   +-- subjectController.js
-�   +-- middleware/
-�   �   +-- authMiddleware.js
-�   +-- models/
-�   �   +-- Admin.js
-�   �   +-- Semester.js
-�   �   +-- Subject.js
-�   �   +-- Resource.js
-�   �   +-- Contact.js
-�   +-- routes/
-�   �   +-- adminRoutes.js
-�   �   +-- contentRoutes.js
-�   �   +-- contactRoutes.js
-�   �   +-- subjectRoutes.js
-�   +-- scripts/
-�   �   +-- createAdmin.js
-�   +-- server.js
-+-- package.json
-+-- package-lock.json
+├── src/
+│   ├── config/
+│   │   └── db.js
+│   ├── controllers/
+│   │   ├── adminController.js
+│   │   ├── contentController.js
+│   │   ├── contactController.js
+│   │   └── subjectController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   ├── models/
+│   │   ├── Admin.js
+│   │   ├── Semester.js
+│   │   ├── Subject.js
+│   │   ├── Resource.js
+│   │   └── Contact.js
+│   ├── routes/
+│   │   ├── adminRoutes.js
+│   │   ├── contentRoutes.js
+│   │   ├── contactRoutes.js
+│   │   └── subjectRoutes.js
+│   ├── scripts/
+│   │   └── createAdmin.js
+│   └── server.js
+├── package.json
+└── package-lock.json
 ```
 
 ### API Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/admin/register` | — | Register admin |
-| POST | `/api/admin/login` | — | Admin login (returns JWT) |
-| GET | `/api/content/semesters` | — | List all semesters |
-| POST | `/api/content/semesters` | JWT | Add semester |
-| GET | `/api/content/subjects/:semester` | — | List subjects by semester |
-| POST | `/api/content/subjects` | JWT | Add subject |
-| GET | `/api/content/resources/:subject` | — | List resources by subject |
-| POST | `/api/content/resources` | JWT | Add resource |
-| GET | `/api/content/pyqs/:year` | — | List PYQs by year |
-| GET | `/api/content/pyqs/years` | — | List available PYQ years |
-| POST | `/api/content/pyqs` | JWT | Add PYQ |
-| POST | `/api/contact` | — | Submit contact message |
-| GET | `/api/contact` | JWT | List contact messages |
+|-------------------------------------------------------------------------------|
+| Method |           Endpoint                | Auth |     Description           |
+|--------|-----------------------------------|------|---------------------------|
+| POST   | `/api/admin/register`             |  —   | Register admin            |
+| POST   | `/api/admin/login`                |  —   | Admin login (returns JWT) |
+| GET    | `/api/content/semesters`          |  —   | List all semesters        |
+| POST   | `/api/content/semesters`          | JWT  | Add semester              |
+| GET    | `/api/content/subjects/:semester` |  —   | List subjects by semester |
+| POST   | `/api/content/subjects`           | JWT  | Add subject               |
+| GET    | `/api/content/resources/:subject` |  —   | List resources by subject |
+| POST   | `/api/content/resources`          | JWT  | Add resource              |
+| GET    | `/api/content/pyqs/:year`         |  —   | List PYQs by year         |
+| GET    | `/api/content/pyqs/years`         |  —   | List available PYQ years  |
+| POST   | `/api/content/pyqs`               | JWT  | Add PYQ                   |
+| POST   | `/api/contact`                    |  —   | Submit contact message    |
+| GET    | `/api/contact`                    | JWT  | List contact messages     |
+|-------------------------------------------------------------------------------|
 
 ---
 
@@ -283,18 +292,20 @@ backend/
 
 ## 10. Feature Explanation
 
-| Feature | Description |
-|---------|-------------|
-| Semester Browser | Browse 8 semesters with API-backed + fallback data |
-| Subject Viewer | View theory and lab subjects per semester |
-| Resource Browser | Access notes, books, references grouped by type |
-| PYQ Archive | Browse previous year papers organized by year and semester |
-| Admin Dashboard | Sidebar-based panel for managing all resources |
-| Contact Form | Functional form with API submission and toast feedback |
-| Dark/Light Mode | Theme toggle with localStorage persistence |
-| 404 Page | Animated catch-all for invalid routes |
-| Scroll Progress | Gradient bar showing reading progress |
-| Toast Notifications | Styled feedback for all user actions |
+|----------------------------------------------------------------------------------|
+|     Feature         |                 Description                                | 
+|---------------------|------------------------------------------------------------|
+| Semester Browser    | Browse 8 semesters with API-backed + fallback data         |
+| Subject Viewer      | View theory and lab subjects per semester                  |
+| Resource Browser    | Access notes, books, references grouped by type            |
+| PYQ Archive         | Browse previous year papers organized by year and semester |
+| Admin Dashboard     | Sidebar-based panel for managing all resources             |
+| Contact Form        | Functional form with API submission and toast feedback     |
+| Dark/Light Mode     | Theme toggle with localStorage persistence                 |
+| 404 Page            | Animated catch-all for invalid routes                      |
+| Scroll Progress     | Gradient bar showing reading progress                      | 
+| Toast Notifications | Styled feedback for all user actions                       |
+|----------------------------------------------------------------------------------|
 
 ---
 
