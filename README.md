@@ -200,7 +200,6 @@ backend/
 
 ### API Endpoints
 
-|-------------------------------------------------------------------------------|
 | Method |           Endpoint                | Auth |     Description           |
 |--------|-----------------------------------|------|---------------------------|
 | POST   | `/api/admin/register`             |  —   | Register admin            |
@@ -216,7 +215,6 @@ backend/
 | POST   | `/api/content/pyqs`               | JWT  | Add PYQ                   |
 | POST   | `/api/contact`                    |  —   | Submit contact message    |
 | GET    | `/api/contact`                    | JWT  | List contact messages     |
-|-------------------------------------------------------------------------------|
 
 ---
 
@@ -292,7 +290,7 @@ backend/
 
 ## 10. Feature Explanation
 
-|----------------------------------------------------------------------------------|
+
 |     Feature         |                 Description                                | 
 |---------------------|------------------------------------------------------------|
 | Semester Browser    | Browse 8 semesters with API-backed + fallback data         |
@@ -305,7 +303,6 @@ backend/
 | 404 Page            | Animated catch-all for invalid routes                      |
 | Scroll Progress     | Gradient bar showing reading progress                      | 
 | Toast Notifications | Styled feedback for all user actions                       |
-|----------------------------------------------------------------------------------|
 
 ---
 
