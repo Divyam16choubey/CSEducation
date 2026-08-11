@@ -6,6 +6,10 @@ const resourceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      default: "",
+    },
     type: {
       type: String,
       enum: ["notes", "teacher-notes", "books", "pyqs", "reference"],

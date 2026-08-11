@@ -8,19 +8,19 @@ import { fetchSemesterSubjects } from "../api/subjectApi";
 import { staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
 import { semesterSubjects, toSlug } from "../data/semesterSubjects";
+import { IconSubject, IconLab, IconProject, IconAlertCircle, IconEmptyState } from "../components/icons";
 
 // ── Section config by type ──
 const sectionConfig = {
-  theory: { icon: "📖", label: "Theory Subjects" },
-  lab: { icon: "🔬", label: "Lab Subjects" },
-  project: { icon: "🚀", label: "Project" },
+  theory: { Icon: IconSubject, label: "Theory Subjects", badge: "Theory" },
+  lab: { Icon: IconLab, label: "Lab Subjects", badge: "Lab" },
+  project: { Icon: IconProject, label: "Project", badge: "Project" },
 };
 
 // ── Helpers ──
 const buildSubjects = (names, type) =>
   names.map((name) => ({ name, type }));
 
-/** Count total resources in a subject document */
 const countResources = (s) => {
   let count = 0;
   if (s.notesLinks) count += s.notesLinks.length;
@@ -31,15 +31,14 @@ const countResources = (s) => {
   return count;
 };
 
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+
 export default function SemesterPage() {
   const { id } = useParams();
   const semId = Number(id);
-  const { data, loading, error } = useApi(() => getSubjects(id), [id]);
-
-  // Fetch subjects from new subject API for resource counts
+  const { data, loading, error, refetch } = useApi(() => getSubjects(id), [id]);
   const { data: subjectData } = useApi(() => fetchSemesterSubjects(id), [id]);
 
-  // Build a slug → resource count map
   const resourceCountMap = {};
   if (subjectData && subjectData.length > 0) {
     subjectData.forEach((s) => {
@@ -49,116 +48,159 @@ export default function SemesterPage() {
     });
   }
 
-  // API-first, local config fallback
   const hasApiData = data && data.length > 0;
   const localConfig = semesterSubjects[semId] || { theory: [], lab: [] };
 
-  // Build sections dynamically from whatever keys exist (theory, lab, project)
   const sections = Object.entries(sectionConfig)
     .map(([key, cfg]) => {
       const localNames = localConfig[key];
-      if (!localNames) return null; // semester doesn't have this section type
+      if (!localNames) return null;
 
       const subjects = hasApiData
-        ? data.filter((s) => s.type === cfg.label.split(" ")[0]) // "Theory", "Lab", "Project"
+        ? data.filter((s) => s.type === cfg.label.split(" ")[0])
         : buildSubjects(localNames, cfg.label);
 
       return { key, ...cfg, subjects };
     })
     .filter(Boolean);
 
+  const totalSubjects = sections.reduce((sum, s) => sum + s.subjects.length, 0);
+
   const breadcrumbItems = [
     { label: "Home", to: "/" },
     { label: "Semesters", to: "/semester" },
-    { label: `Semester ${id}` },
+    { label: `Semester ${ROMAN[semId - 1] || id}` },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      {/* ── Header ── */}
-      <section className="gradient-bg py-14 px-6">
-        <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen" style={{ background: "var(--color-background)" }}>
+      {/* Header */}
+      <section className="py-14 px-6" style={{ background: "var(--color-surface-raised)" }}>
+        <div className="max-w-content mx-auto">
           <Breadcrumb items={breadcrumbItems} />
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="section-title"
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            Semester <span className="gradient-text">{id}</span>
-          </motion.h1>
-          <p className="section-subtitle mt-3">
-            {sections.reduce((sum, s) => sum + s.subjects.length, 0)} subjects across{" "}
-            {sections.length} categories
-          </p>
+            <h1 className="text-h1 md:text-display text-heading dark:text-heading-dark tracking-tight">
+              Semester{" "}
+              <span className="gradient-text">{ROMAN[semId - 1] || id}</span>
+            </h1>
+            <div className="flex items-center gap-3 mt-3 flex-wrap">
+              <span className="text-body text-subtle dark:text-subtle-dark">
+                {totalSubjects} subject{totalSubjects !== 1 ? "s" : ""} across{" "}
+                {sections.length} {sections.length === 1 ? "category" : "categories"}
+              </span>
+              {sections.map((s) => (
+                <span key={s.key} className="badge badge-primary">
+                  {s.subjects.length} {s.badge}
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Content ── */}
+      {/* Content */}
       <section className="py-14 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-content mx-auto">
+
+          {/* Loading */}
           {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              <SkeletonCard count={6} />
+            <div className="space-y-10">
+              <div>
+                <div className="skeleton skeleton-text h-5 w-40 mb-6" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <SkeletonCard count={5} variant="subject" />
+                </div>
+              </div>
+              <div>
+                <div className="skeleton skeleton-text h-5 w-32 mb-6" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <SkeletonCard count={3} variant="subject" />
+                </div>
+              </div>
             </div>
           )}
 
+          {/* Error State */}
           {error && !loading && (
-            <p className="text-center text-red-500 mb-6">{error}</p>
+            <div className="error-state">
+              <div className="error-icon">
+                <IconAlertCircle size={28} />
+              </div>
+              <div className="error-title">Unable to load subjects</div>
+              <div className="error-description">
+                We couldn't fetch the subjects for this semester. Please check your connection and try again.
+              </div>
+              <button onClick={refetch} className="btn-primary btn-sm">
+                Try Again
+              </button>
+            </div>
           )}
 
+          {/* Sections */}
           {!loading && (
-            <div className="space-y-12">
+            <div className="space-y-14">
               {sections.map((section, sIdx) => (
                 <div key={section.key}>
-                  {/* ── Section divider (skip before first) ── */}
-                  {sIdx > 0 && (
-                    <div className="h-px mb-10 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
-                  )}
+                  {sIdx > 0 && <div className="divider-accent mb-10" />}
 
-                  {/* ── Section header ── */}
+                  {/* Section header */}
                   <motion.div
-                    initial={{ opacity: 0, y: 15 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: sIdx * 0.15, duration: 0.4 }}
+                    transition={{ delay: sIdx * 0.1, duration: 0.35 }}
                     className="flex items-center gap-3 mb-6"
                   >
-                    <span className="text-2xl">{section.icon}</span>
-                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                    <div className="icon-container">
+                      <section.Icon size={20} />
+                    </div>
+                    <h2 className="text-h3 text-heading dark:text-heading-dark">
                       {section.label}
                     </h2>
-                    <span className="inline-flex items-center justify-center min-w-[28px] h-7 px-2
-                                     rounded-full text-xs font-bold
-                                     bg-gradient-to-r from-blue-500/10 to-indigo-500/10
-                                     dark:from-blue-500/20 dark:to-indigo-500/20
-                                     text-blue-600 dark:text-blue-400 border border-blue-500/15">
+                    <span className="badge badge-primary">
                       {section.subjects.length}
                     </span>
                   </motion.div>
 
-                  {/* ── Subject cards grid ── */}
-                  <motion.div
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-                  >
-                    {section.subjects.map((s, i) => {
-                      const slug = toSlug(s.name);
-                      const rCount = resourceCountMap[slug] || 0;
-                      return (
-                        <SubjectCard
-                          key={s._id || i}
-                          name={s.name}
-                          icon={section.icon}
-                          to={`/subject/${slug}`}
-                          resourceCount={rCount}
-                        />
-                      );
-                    })}
-                  </motion.div>
-
-                  {section.subjects.length === 0 && (
-                    <p className="text-gray-500 dark:text-gray-400">
-                      No {section.label.toLowerCase()} available yet.
-                    </p>
+                  {/* Subject cards grid */}
+                  {section.subjects.length > 0 ? (
+                    <motion.div
+                      variants={staggerContainer}
+                      initial="hidden"
+                      animate="visible"
+                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
+                    >
+                      {section.subjects.map((s, i) => {
+                        const slug = toSlug(s.name);
+                        const rCount = resourceCountMap[slug] || 0;
+                        return (
+                          <SubjectCard
+                            key={s._id || i}
+                            name={s.name}
+                            icon={<section.Icon size={22} />}
+                            to={`/subject/${slug}`}
+                            resourceCount={rCount}
+                            badge={section.badge}
+                          />
+                        );
+                      })}
+                    </motion.div>
+                  ) : (
+                    <div className="empty-state">
+                      <div className="empty-icon">
+                        <IconEmptyState size={24} />
+                      </div>
+                      <div className="empty-title">
+                        No {section.label.toLowerCase()} yet
+                      </div>
+                      <div className="empty-description">
+                        {section.label} for this semester haven't been added yet.
+                      </div>
+                    </div>
                   )}
                 </div>
               ))}

@@ -28,9 +28,12 @@ export default function App() {
         duration: 3000,
         style: {
           borderRadius: "12px",
-          background: "#1e293b",
-          color: "#f1f5f9",
+          background: "var(--color-surface-raised, #1c1a2e)",
+          color: "var(--color-text-primary, #f0f0f5)",
           fontSize: "14px",
+          fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
+          border: "1px solid var(--color-border, #2a2840)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         },
       }} />
       <Navbar />

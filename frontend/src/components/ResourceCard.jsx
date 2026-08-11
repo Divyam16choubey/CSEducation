@@ -1,36 +1,49 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { fadeUp, cardHover, cardTap } from "../animations/motion";
+import { fadeUp } from "../animations/motion";
+import { IconExternalLink } from "./icons";
 
-export default function ResourceCard({ label, href, icon }) {
+/**
+ * ResourceCard — Row-style resource item with icon, title, and action button.
+ * Action button is always visible (not hidden on mobile).
+ *
+ * @param {string}    label       — Resource title
+ * @param {string}    description — Optional short description
+ * @param {string}    href        — URL (internal or external)
+ * @param {ReactNode} icon        — Icon element for the resource type
+ * @param {string}    type        — Optional type label ("PDF", "Link", etc.)
+ */
+export default function ResourceCard({ label, description, href, icon, type }) {
   const isInternal = href && href.startsWith("/");
 
   const content = (
     <>
-      <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10
-                      dark:from-blue-500/20 dark:to-indigo-500/20
-                      flex items-center justify-center text-2xl">
+      <div className="resource-icon">
         {icon}
       </div>
-      <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">{label}</div>
-      <div className="mt-4 h-0.5 w-0 mx-auto bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500
-                      group-hover:w-full transition-all duration-300 rounded-full" />
+      <div className="resource-body">
+        <div className="resource-title">{label}</div>
+        {description && <div className="resource-meta">{description}</div>}
+        {type && !description && <div className="resource-meta">{type}</div>}
+      </div>
+      <span className="resource-action">
+        {isInternal ? "View" : "Open"}
+        <IconExternalLink size={12} />
+      </span>
     </>
   );
 
-  const classes = `group block card p-8 text-center`;
-
   if (isInternal) {
     return (
-      <motion.div variants={fadeUp} whileHover={cardHover} whileTap={cardTap}>
-        <Link to={href} className={classes}>{content}</Link>
+      <motion.div variants={fadeUp}>
+        <Link to={href} className="resource-row">{content}</Link>
       </motion.div>
     );
   }
 
   return (
-    <motion.div variants={fadeUp} whileHover={cardHover} whileTap={cardTap}>
-      <a href={href} target="_blank" rel="noreferrer" className={classes}>{content}</a>
+    <motion.div variants={fadeUp}>
+      <a href={href} target="_blank" rel="noreferrer" className="resource-row">{content}</a>
     </motion.div>
   );
 }

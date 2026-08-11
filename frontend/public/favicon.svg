@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none">
+  <!-- Book shape -->
+  <path d="M6 12C6 10.3431 7.34315 9 9 9H21C22.6569 9 24 10.3431 24 12V40C24 38.3431 22.6569 37 21 37H9C7.34315 37 6 35.6569 6 34V12Z" fill="#4f46e5" opacity="0.15"/>
+  <path d="M42 12C42 10.3431 40.6569 9 39 9H27C25.3431 9 24 10.3431 24 12V40C24 38.3431 25.3431 37 27 37H39C40.6569 37 42 35.6569 42 34V12Z" fill="#4f46e5" opacity="0.15"/>
+  <path d="M6 12C6 10.3431 7.34315 9 9 9H21C22.6569 9 24 10.3431 24 12V40C24 38.3431 22.6569 37 21 37H9C7.34315 37 6 35.6569 6 34V12Z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 12C42 10.3431 40.6569 9 39 9H27C25.3431 9 24 10.3431 24 12V40C24 38.3431 25.3431 37 27 37H39C40.6569 37 42 35.6569 42 34V12Z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Code brackets -->
+  <path d="M18 18L13 23L18 28" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30 18L35 23L30 28" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="26" y1="17" x2="22" y2="29" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
+  <!-- Graduation cap -->
+  <path d="M24 3L14 7.5L24 12L34 7.5L24 3Z" fill="#4f46e5"/>
+  <path d="M18 9.5V13C18 13 20 15 24 15C28 15 30 13 30 13V9.5" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <line x1="34" y1="7.5" x2="34" y2="14" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

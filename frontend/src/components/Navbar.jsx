@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Logo from "./Logo";
+import { IconMenu, IconClose, IconChevronDown, IconSun, IconMoon } from "./icons";
 
 export default function Navbar() {
   const [dark, setDark] = useState(false);
@@ -13,7 +15,6 @@ export default function Navbar() {
   const semRef = useRef(null);
   const pyqRef = useRef(null);
 
-  // ── Scroll detection ──
   const handleScroll = useCallback(() => {
     setScrolled(window.scrollY > 10);
   }, []);
@@ -38,12 +39,25 @@ export default function Navbar() {
     };
   }, [handleScroll]);
 
-  // Close mobile menu on route change
+  /* Close menus on navigation */
   useEffect(() => {
     setMobileOpen(false);
     setOpenSem(false);
     setOpenPyq(false);
   }, [location.pathname]);
+
+  /* Escape key closes dropdowns */
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setOpenSem(false);
+        setOpenPyq(false);
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, []);
 
   const toggleTheme = () => {
     const next = !dark;
@@ -56,90 +70,82 @@ export default function Navbar() {
   const pyqYears = ["2021", "2022", "2023", "2024", "2025", "2026"];
 
   const dropdownMotion = {
-    initial: { opacity: 0, y: -8, scale: 0.96 },
+    initial: { opacity: 0, y: -6, scale: 0.97 },
     animate: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -8, scale: 0.96 },
-    transition: { duration: 0.18, ease: "easeOut" },
+    exit: { opacity: 0, y: -6, scale: 0.97 },
+    transition: { duration: 0.15, ease: "easeOut" },
   };
 
   const mobileMenuMotion = {
     initial: { opacity: 0, height: 0 },
     animate: { opacity: 1, height: "auto" },
     exit: { opacity: 0, height: 0 },
-    transition: { duration: 0.25, ease: "easeInOut" },
+    transition: { duration: 0.2, ease: "easeInOut" },
   };
 
-  // ── Adaptive navbar classes ──
-  const navBase = "sticky top-0 z-50 px-6 py-3 transition-all duration-500";
-  const navLight = scrolled
-    ? "bg-white/80 border-b border-gray-200/60 shadow-lg shadow-gray-200/20"
-    : "bg-white/70 border-b border-gray-200/40 shadow-sm";
-  const navDark = scrolled
-    ? "bg-gradient-to-r from-slate-900/95 to-slate-800/95 border-b border-white/10 shadow-lg shadow-black/30"
-    : "bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-b border-white/5 shadow-md shadow-black/20";
-
-  // ── Dropdown adaptive classes ──
-  const dropdownClass = dark
-    ? "absolute mt-2 w-44 rounded-xl shadow-2xl overflow-hidden border border-white/10 bg-slate-800/95 backdrop-blur-xl z-50"
-    : "absolute mt-2 w-44 rounded-xl shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-200/60 bg-white/90 backdrop-blur-xl z-50";
-
-  const dropdownItemClass = dark
-    ? "block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-150"
-    : "block px-4 py-2.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50/70 transition-colors duration-150";
+  /* Check if a dropdown parent is "active" */
+  const isSemActive = location.pathname.startsWith("/semester");
+  const isPyqActive = location.pathname.startsWith("/pyqs");
 
   return (
     <nav
-      className={`${navBase} ${dark ? navDark : navLight}`}
-      style={{ backdropFilter: "blur(16px) saturate(180%)" }}
+      className={`sticky top-0 z-50 transition-all duration-300
+        ${scrolled ? "shadow-sm" : ""}`}
+      style={{
+        backdropFilter: "blur(16px) saturate(180%)",
+        background: scrolled
+          ? "var(--color-surface-overlay)"
+          : "var(--color-surface-overlay)",
+        borderBottom: `1px solid ${scrolled ? "var(--color-border)" : "transparent"}`,
+      }}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* ── Brand ── */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <motion.span
-            className="text-2xl"
-            whileHover={{ scale: 1.15, rotate: -8 }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          >
-            🎓
-          </motion.span>
-          <span className="text-xl font-bold tracking-wide gradient-text
-                           group-hover:opacity-80 transition-opacity duration-300">
-            CSEducation
-          </span>
+      <div className="max-w-content mx-auto px-6 flex justify-between items-center h-14">
+        {/* Brand */}
+        <Link to="/" className="flex-shrink-0" aria-label="CSEducation home">
+          <Logo variant="horizontal" size="sm" />
         </Link>
 
-        {/* ── Mobile hamburger ── */}
+        {/* Mobile hamburger */}
         <button
-          className={`md:hidden p-2 rounded-xl transition-colors duration-300 ${dark ? "hover:bg-white/10 text-white" : "hover:bg-gray-100 text-gray-700"
-            }`}
+          className="btn-icon md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
         >
-          <span className="text-xl">{mobileOpen ? "✕" : "☰"}</span>
+          {mobileOpen ? <IconClose size={20} /> : <IconMenu size={20} />}
         </button>
 
-        {/* ── Desktop menu ── */}
-        <div className="hidden md:flex items-center gap-1">
-          <NavLink to="/" label="Home" current={location.pathname} dark={dark} />
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center gap-0.5">
+          <NavLink to="/" label="Home" current={location.pathname} />
 
           {/* Semester dropdown */}
           <div className="relative" ref={semRef}
             onMouseEnter={() => { setOpenSem(true); setOpenPyq(false); }}
           >
-            <NavButton label="Semester" isOpen={openSem} dark={dark}
+            <NavButton
+              label="Semesters"
+              isOpen={openSem}
+              isActive={isSemActive}
               onClick={() => { setOpenSem(v => !v); setOpenPyq(false); }}
             />
             <AnimatePresence>
               {openSem && (
                 <motion.div {...dropdownMotion}
-                  className={dropdownClass}
+                  className="dropdown"
+                  role="menu"
+                  style={{ width: "320px" }}
                   onMouseLeave={() => setOpenSem(false)}
                 >
-                  {semesters.map((s, i) => (
-                    <Link key={i} to={`/semester/${i + 1}`}
-                      className={dropdownItemClass} onClick={() => setOpenSem(false)}
-                    >{s}</Link>
-                  ))}
+                  <div className="grid grid-cols-2 gap-0.5">
+                    {semesters.map((s, i) => (
+                      <Link key={i} to={`/semester/${i + 1}`}
+                        className={`dropdown-item ${location.pathname === `/semester/${i + 1}` ? "dropdown-item-active" : ""}`}
+                        role="menuitem"
+                        onClick={() => setOpenSem(false)}
+                      >{s}</Link>
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -149,18 +155,25 @@ export default function Navbar() {
           <div className="relative" ref={pyqRef}
             onMouseEnter={() => { setOpenPyq(true); setOpenSem(false); }}
           >
-            <NavButton label="PYQs" isOpen={openPyq} dark={dark}
+            <NavButton
+              label="PYQs"
+              isOpen={openPyq}
+              isActive={isPyqActive}
               onClick={() => { setOpenPyq(v => !v); setOpenSem(false); }}
             />
             <AnimatePresence>
               {openPyq && (
                 <motion.div {...dropdownMotion}
-                  className={dropdownClass}
+                  className="dropdown"
+                  role="menu"
+                  style={{ width: "160px" }}
                   onMouseLeave={() => setOpenPyq(false)}
                 >
                   {pyqYears.map(y => (
                     <Link key={y} to={`/pyqs/${y}`}
-                      className={dropdownItemClass} onClick={() => setOpenPyq(false)}
+                      className={`dropdown-item ${location.pathname === `/pyqs/${y}` ? "dropdown-item-active" : ""}`}
+                      role="menuitem"
+                      onClick={() => setOpenPyq(false)}
                     >{y}</Link>
                   ))}
                 </motion.div>
@@ -168,93 +181,108 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <NavLink to="/about" label="About" current={location.pathname} dark={dark} />
-          <NavLink to="/contact" label="Contact" current={location.pathname} dark={dark} />
+          <NavLink to="/about" label="About" current={location.pathname} />
+          <NavLink to="/contact" label="Contact" current={location.pathname} />
 
-          {/* ── Theme Toggle ── */}
-          <motion.button
+          {/* Separator */}
+          <div className="w-px h-5 mx-2" style={{ background: "var(--color-border)" }} />
+
+          {/* Theme toggle — pill container */}
+          <button
             onClick={toggleTheme}
-            className={`ml-3 p-2.5 rounded-xl transition-all duration-500 ${dark
-              ? "bg-white/10 hover:bg-white/20 text-yellow-300"
-              : "bg-gray-100 hover:bg-gray-200 text-indigo-500"
-              }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.92 }}
-            aria-label="Toggle theme"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200
+              hover:bg-primary-100/60 dark:hover:bg-primary-900/30"
+            style={{ color: "var(--color-text-secondary)" }}
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
           >
             <motion.span
               key={dark ? "sun" : "moon"}
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="block text-lg"
+              initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              className="block"
             >
-              {dark ? "☀️" : "🌙"}
+              {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
             </motion.span>
-          </motion.button>
+          </button>
+
+          {/* Admin login */}
+          <Link to="/admin/login" className="btn-primary btn-sm ml-1.5">
+            Admin Login
+          </Link>
         </div>
       </div>
 
-      {/* ── Mobile menu ── */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div {...mobileMenuMotion}
-            className={`md:hidden overflow-hidden mt-3 pt-3 ${dark ? "border-t border-white/10" : "border-t border-gray-200/60"
-              }`}
+            className="md:hidden overflow-hidden border-t px-6"
+            style={{ borderColor: "var(--color-border)" }}
           >
-            <div className="flex flex-col gap-1 py-2">
-              <MobileLink to="/" label="Home" dark={dark} />
+            <div className="flex flex-col gap-0.5 py-3">
+              <MobileLink to="/" label="Home" active={location.pathname === "/"} />
 
               <button
-                className={`py-2.5 px-3 text-left rounded-lg text-sm font-medium tracking-wide transition-colors duration-300 ${dark ? "text-gray-300 hover:bg-white/10 hover:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                className="flex items-center justify-between py-2.5 px-3 rounded-lg text-body-sm font-medium transition-colors duration-200"
+                style={{ color: isSemActive ? "var(--color-primary)" : "var(--color-text-secondary)" }}
                 onClick={() => setOpenSem(!openSem)}
+                aria-expanded={openSem}
               >
-                Semester {openSem ? "▴" : "▾"}
+                Semesters
+                <IconChevronDown size={15} className={`transition-transform duration-200 ${openSem ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
                 {openSem && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden pl-4 flex flex-col gap-0.5"
+                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden pl-3 flex flex-col gap-0.5"
                   >
                     {semesters.map((s, i) => (
-                      <MobileLink key={i} to={`/semester/${i + 1}`} label={s} small dark={dark} />
+                      <MobileLink key={i} to={`/semester/${i + 1}`} label={s} small active={location.pathname === `/semester/${i + 1}`} />
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
 
               <button
-                className={`py-2.5 px-3 text-left rounded-lg text-sm font-medium tracking-wide transition-colors duration-300 ${dark ? "text-gray-300 hover:bg-white/10 hover:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                className="flex items-center justify-between py-2.5 px-3 rounded-lg text-body-sm font-medium transition-colors duration-200"
+                style={{ color: isPyqActive ? "var(--color-primary)" : "var(--color-text-secondary)" }}
                 onClick={() => setOpenPyq(!openPyq)}
+                aria-expanded={openPyq}
               >
-                PYQs {openPyq ? "▴" : "▾"}
+                PYQs
+                <IconChevronDown size={15} className={`transition-transform duration-200 ${openPyq ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
                 {openPyq && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden pl-4 flex flex-col gap-0.5"
+                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden pl-3 flex flex-col gap-0.5"
                   >
                     {pyqYears.map(y => (
-                      <MobileLink key={y} to={`/pyqs/${y}`} label={y} small dark={dark} />
+                      <MobileLink key={y} to={`/pyqs/${y}`} label={y} small active={location.pathname === `/pyqs/${y}`} />
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <MobileLink to="/about" label="About" dark={dark} />
-              <MobileLink to="/contact" label="Contact" dark={dark} />
+              <MobileLink to="/about" label="About" active={location.pathname === "/about"} />
+              <MobileLink to="/contact" label="Contact" active={location.pathname === "/contact"} />
 
-              <button onClick={toggleTheme}
-                className={`mt-2 px-3 py-2.5 rounded-xl text-left text-sm font-medium transition-all duration-500 ${dark
-                  ? "bg-white/10 hover:bg-white/20 text-gray-300"
-                  : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                  }`}
-              >
-                {dark ? "☀️ Light Mode" : "🌙 Dark Mode"}
-              </button>
+              <div className="divider my-2" />
+
+              <div className="flex items-center gap-2 px-1">
+                <button
+                  onClick={toggleTheme}
+                  className="btn-icon"
+                  aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
+                </button>
+                <Link to="/admin/login" className="btn-primary btn-sm flex-1 text-center">
+                  Admin Login
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}
@@ -263,57 +291,53 @@ export default function Navbar() {
   );
 }
 
-// ── Desktop Nav Link with underline animation ──
-function NavLink({ to, label, current, dark }) {
+/* Desktop Nav Link */
+function NavLink({ to, label, current }) {
   const isActive = current === to;
   return (
     <Link
       to={to}
-      className={`relative px-3 py-2 rounded-lg text-sm font-medium tracking-wide transition-all duration-300 group ${dark
-        ? isActive
-          ? "text-white bg-white/10"
-          : "text-gray-300 hover:text-white hover:bg-white/10"
-        : isActive
-          ? "text-blue-600 bg-blue-50/60"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
-        }`}
+      className={`relative px-3 py-2 rounded-lg text-body-sm font-medium transition-colors duration-200
+        ${isActive ? "nav-link-active" : "nav-link"}`}
+      aria-current={isActive ? "page" : undefined}
     >
       {label}
-      {/* Animated underline */}
-      <span className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 rounded-full
-                         bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500
-                         transition-all duration-300 ${isActive ? "w-4/5" : "w-0 group-hover:w-3/5"}`} />
+      <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-full
+        bg-primary-600 dark:bg-primary-400
+        transition-all duration-300 ${isActive ? "w-5" : "w-0 group-hover:w-3"}`} />
     </Link>
   );
 }
 
-// ── Desktop dropdown button ──
-function NavButton({ label, isOpen, dark, onClick }) {
+/* Desktop dropdown button */
+function NavButton({ label, isOpen, isActive, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-2 rounded-lg text-sm font-medium tracking-wide transition-all duration-300 ${dark
-        ? "text-gray-300 hover:text-white hover:bg-white/10"
-        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
-        }`}
+      className={`px-3 py-2 rounded-lg text-body-sm font-medium transition-colors duration-200 flex items-center gap-1
+        ${isActive ? "nav-link-active" : "nav-link"}`}
+      aria-expanded={isOpen}
+      aria-haspopup="true"
     >
-      {label}{" "}
-      <span className={`inline-block transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
-        ▾
-      </span>
+      {label}
+      <IconChevronDown
+        size={14}
+        className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+      />
     </button>
   );
 }
 
-// ── Mobile link ──
-function MobileLink({ to, label, small, dark }) {
+/* Mobile link */
+function MobileLink({ to, label, small, active }) {
   return (
     <Link to={to}
-      className={`py-2 px-3 rounded-lg transition-colors duration-300 ${small ? "text-sm" : "text-sm font-medium tracking-wide"
-        } ${dark
-          ? "text-gray-300 hover:text-white hover:bg-white/10"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-        }`}
+      className={`py-2 px-3 rounded-lg transition-colors duration-200 text-body-sm
+        ${active ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-950/30" : ""}
+        ${!active && small ? "text-subtle dark:text-subtle-dark" : ""}
+        ${!active && !small ? "font-medium text-subtle dark:text-subtle-dark" : ""}
+        hover:bg-primary-50/60 dark:hover:bg-primary-950/20`}
+      aria-current={active ? "page" : undefined}
     >
       {label}
     </Link>

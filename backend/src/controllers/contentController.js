@@ -81,9 +81,10 @@ exports.getResources = async (req, res) => {
 
 exports.addResource = async (req, res) => {
     try {
-        const { title, type, url, subject, semester, year } = req.body;
+        const { title, description, type, url, subject, semester, year } = req.body;
         const resource = await Resource.create({
             title,
+            description,
             type,
             url,
             subject,
@@ -94,6 +95,47 @@ exports.addResource = async (req, res) => {
     } catch (error) {
         console.error("addResource error:", error.message);
         res.status(500).json({ message: "Failed to add resource" });
+    }
+};
+
+// ── Update Resource ──
+
+exports.updateResource = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description, type, url } = req.body;
+
+        const resource = await Resource.findById(id);
+        if (!resource) {
+            return res.status(404).json({ message: "Resource not found" });
+        }
+
+        if (title !== undefined) resource.title = title;
+        if (description !== undefined) resource.description = description;
+        if (type !== undefined) resource.type = type;
+        if (url !== undefined) resource.url = url;
+
+        await resource.save();
+        res.json(resource);
+    } catch (error) {
+        console.error("updateResource error:", error.message);
+        res.status(500).json({ message: "Failed to update resource" });
+    }
+};
+
+// ── Delete Resource ──
+
+exports.deleteResource = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const resource = await Resource.findByIdAndDelete(id);
+        if (!resource) {
+            return res.status(404).json({ message: "Resource not found" });
+        }
+        res.json({ success: true, message: "Resource deleted" });
+    } catch (error) {
+        console.error("deleteResource error:", error.message);
+        res.status(500).json({ message: "Failed to delete resource" });
     }
 };
 

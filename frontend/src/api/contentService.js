@@ -13,6 +13,10 @@ export const addSubject = (data) => API.post("/content/subjects", data);
 export const getResources = (subjectId) =>
   API.get(`/content/resources/${subjectId}`);
 export const addResource = (data) => API.post("/content/resources", data);
+export const updateResource = (id, data) =>
+  API.put(`/content/resources/${id}`, data);
+export const deleteResource = (id) =>
+  API.delete(`/content/resources/${id}`);
 
 // ── PYQs ──
 export const getPYQYears = () => API.get("/content/pyqs/years");

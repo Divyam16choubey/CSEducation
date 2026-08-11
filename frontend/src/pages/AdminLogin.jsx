@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginAdmin } from "../api/adminService";
 import toast from "react-hot-toast";
+import { IconShield } from "../components/icons";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -26,46 +27,46 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-bg px-4 transition-colors">
+    <div className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: "var(--color-surface-raised)" }}
+    >
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.96 }}
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.45 }}
         className="w-full max-w-md"
       >
-        <div className="card">
+        <div className="card-static">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600
-                            flex items-center justify-center text-3xl text-white shadow-lg">
-              🔒
+            <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-primary-600
+              flex items-center justify-center text-white shadow-lg"
+              style={{ boxShadow: "0 8px 24px rgba(79, 70, 229, 0.25)" }}
+            >
+              <IconShield size={24} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Login</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="text-h2 text-heading dark:text-heading-dark">Admin Login</h1>
+            <p className="text-body-sm text-subtle dark:text-subtle-dark mt-1">
               Sign in to manage resources
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Username
-              </label>
+              <label className="input-label">Username</label>
               <input type="text" className="input" placeholder="Enter username"
                 value={username} onChange={(e) => setUsername(e.target.value)}
                 required disabled={loading} />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Password
-              </label>
+              <label className="input-label">Password</label>
               <input type="password" className="input" placeholder="Enter password"
                 value={password} onChange={(e) => setPassword(e.target.value)}
                 required disabled={loading} />
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? "Logging in…" : "Sign In →"}
+              {loading ? "Logging in…" : "Sign In"}
             </button>
           </form>
         </div>

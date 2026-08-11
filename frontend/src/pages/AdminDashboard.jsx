@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -6,20 +6,51 @@ import {
   addSubject,
   addResource,
   addPYQ,
+  getResources,
+  updateResource,
+  deleteResource,
 } from "../api/contentService";
 import { createSubject } from "../api/subjectApi";
 import { semesterSubjects, toSlug } from "../data/semesterSubjects";
 import toast from "react-hot-toast";
+import {
+  IconSemester,
+  IconSubject,
+  IconResources,
+  IconNotes,
+  IconFileText,
+  IconBooks,
+  IconLink,
+  IconSettings,
+  IconMenu,
+  IconClose,
+  IconDashboard,
+  IconGrid,
+  IconCheck,
+  IconShield,
+  IconEdit,
+  IconTrash,
+  IconPYQ,
+  IconAlertCircle,
+} from "../components/icons";
 
 const sidebarItems = [
-  { key: "semester", label: "Add Semester", icon: "📅" },
-  { key: "subject", label: "Add Subject", icon: "📖" },
-  { key: "resources", label: "Manage Resources", icon: "📦" },
-  { key: "notes", label: "Upload Notes", icon: "📘" },
-  { key: "pyqs", label: "Upload PYQs", icon: "📄" },
-  { key: "books", label: "Upload Books", icon: "📚" },
-  { key: "links", label: "Add References", icon: "🔗" },
+  { key: "semester", label: "Add Semester", Icon: IconSemester },
+  { key: "subject", label: "Add Subject", Icon: IconSubject },
+  { key: "resources", label: "Manage Resources", Icon: IconResources },
+  { key: "notes", label: "Upload Notes", Icon: IconNotes },
+  { key: "pyqs", label: "Upload PYQs", Icon: IconFileText },
+  { key: "books", label: "Upload Books", Icon: IconBooks },
+  { key: "links", label: "Add References", Icon: IconLink },
 ];
+
+const TYPE_ICONS = {
+  notes: IconNotes,
+  "teacher-notes": IconNotes,
+  books: IconBooks,
+  pyqs: IconPYQ,
+  reference: IconLink,
+};
 
 export default function AdminDashboard() {
   const [activeForm, setActiveForm] = useState(null);
@@ -33,39 +64,48 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen transition-colors" style={{ background: "var(--color-background)" }}>
       <div className="flex">
         {/* Sidebar — Desktop */}
-        <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-white dark:bg-gray-800/50
-                          border-r border-gray-200 dark:border-gray-700/50 p-4">
+        <aside
+          className="hidden lg:flex flex-col w-64 min-h-screen p-4"
+          style={{
+            background: "var(--color-surface)",
+            borderRight: "1px solid var(--color-border)",
+          }}
+        >
           <div className="mb-6 px-3">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600
-                              text-white text-sm flex items-center justify-center">⚙️</span>
+            <h2 className="text-h4 text-heading dark:text-heading-dark flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-primary-600 text-white text-sm flex items-center justify-center">
+                <IconSettings size={16} />
+              </span>
               Admin Panel
             </h2>
           </div>
 
           <nav className="space-y-1 flex-1">
             {sidebarItems.map((item) => (
-              <button key={item.key}
+              <button
+                key={item.key}
                 onClick={() => setActiveForm(item.key)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-body-sm font-medium transition-colors
                   ${activeForm === item.key
-                    ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                    ? "bg-primary-600/10 text-primary-600 dark:text-primary-400 border border-primary-600/20"
+                    : "text-subtle dark:text-subtle-dark hover:bg-primary-600/5 dark:hover:bg-white/5"
                   }`}
               >
-                <span className="text-lg">{item.icon}</span>
+                <item.Icon size={18} />
                 {item.label}
               </button>
             ))}
           </nav>
 
-          <button onClick={handleLogout}
-            className="mt-4 w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
-                       text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-            <span>🚪</span> Logout
+          <button
+            onClick={handleLogout}
+            className="mt-4 w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-body-sm font-medium
+                       text-error-600 dark:text-error-500 hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors"
+          >
+            <IconClose size={18} /> Logout
           </button>
         </aside>
 
@@ -73,13 +113,18 @@ export default function AdminDashboard() {
         <main className="flex-1 p-6 lg:p-10">
           {/* Mobile header */}
           <div className="lg:hidden flex items-center justify-between mb-6">
-            <button onClick={() => setMobileSidebar(!mobileSidebar)}
-              className="px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm">
-              ☰ Menu
+            <button
+              onClick={() => setMobileSidebar(!mobileSidebar)}
+              className="btn-secondary btn-sm gap-2"
+            >
+              {mobileSidebar ? <IconClose size={16} /> : <IconMenu size={16} />}
+              Menu
             </button>
-            <button onClick={handleLogout}
-              className="px-3 py-2 rounded-xl text-sm text-red-600 dark:text-red-400
-                         hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="btn-sm text-error-600 dark:text-error-500
+                         hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors rounded-xl px-3 py-2"
+            >
               Logout
             </button>
           </div>
@@ -87,48 +132,50 @@ export default function AdminDashboard() {
           {/* Mobile sidebar drawer */}
           <AnimatePresence>
             {mobileSidebar && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="lg:hidden overflow-hidden mb-6 grid grid-cols-2 sm:grid-cols-3 gap-3"
               >
                 {sidebarItems.map((item) => (
-                  <button key={item.key}
+                  <button
+                    key={item.key}
                     onClick={() => { setActiveForm(item.key); setMobileSidebar(false); }}
-                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-body-sm font-medium transition-colors
                       ${activeForm === item.key
-                        ? "bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20"
-                        : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
+                        ? "bg-primary-600/10 text-primary-600 dark:text-primary-400 border border-primary-600/20"
+                        : "text-subtle dark:text-subtle-dark border"
                       }`}
+                    style={{
+                      background: activeForm !== item.key ? "var(--color-surface)" : undefined,
+                      borderColor: activeForm !== item.key ? "var(--color-border)" : undefined,
+                    }}
                   >
-                    <span>{item.icon}</span> {item.label}
+                    <item.Icon size={16} /> {item.label}
                   </button>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400 mb-8">Manage academic resources</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <h1 className="text-h1 text-heading dark:text-heading-dark mb-2">Dashboard</h1>
+            <p className="text-body-sm text-subtle dark:text-subtle-dark mb-8">Manage academic resources</p>
           </motion.div>
 
           {/* Overview stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             {[
-              { label: "Semesters", value: "8", icon: "📅" },
-              { label: "Forms", value: "6", icon: "📝" },
-              { label: "Resource Types", value: "5", icon: "📦" },
-              { label: "Status", value: "Active", icon: "✅" },
+              { label: "Semesters", value: "8", Icon: IconSemester },
+              { label: "Forms", value: "6", Icon: IconDashboard },
+              { label: "Resource Types", value: "5", Icon: IconGrid },
+              { label: "Status", value: "Active", Icon: IconCheck },
             ].map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className="card text-center"
-              >
-                <div className="text-2xl mb-2">{s.icon}</div>
-                <div className="text-2xl font-bold gradient-text">{s.value}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 uppercase tracking-wider">{s.label}</div>
+              <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="card text-center">
+                <div className="icon-container mx-auto mb-3"><s.Icon size={20} /></div>
+                <div className="text-h2 font-bold gradient-text">{s.value}</div>
+                <div className="text-caption text-subtle dark:text-subtle-dark mt-1 uppercase tracking-wider">{s.label}</div>
               </motion.div>
             ))}
           </div>
@@ -138,14 +185,13 @@ export default function AdminDashboard() {
             <AnimatePresence mode="wait">
               {!activeForm && (
                 <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  className="text-center text-subtle dark:text-subtle-dark py-8">
                   Select an action from the {window.innerWidth >= 1024 ? "sidebar" : "menu"} to manage resources.
                 </motion.p>
               )}
-
               {activeForm === "semester" && <SemesterForm key="semester" />}
               {activeForm === "subject" && <SubjectForm key="subject" />}
-              {activeForm === "resources" && <SubjectResourceForm key="resources" />}
+              {activeForm === "resources" && <ManageResourcesPanel key="resources" />}
               {activeForm === "notes" && <ResourceForm key="notes" type="notes" label="Notes" />}
               {activeForm === "pyqs" && <PYQForm key="pyqs" />}
               {activeForm === "books" && <ResourceForm key="books" type="books" label="Book" />}
@@ -158,7 +204,252 @@ export default function AdminDashboard() {
   );
 }
 
-// ── Form Components ──
+
+/* ══════════════════════════════════════════════════════
+   MANAGE RESOURCES PANEL (Phase 5)
+   ══════════════════════════════════════════════════════ */
+
+function ManageResourcesPanel() {
+  const [semester, setSemester] = useState("");
+  const [subject, setSubject] = useState("");
+  const [resources, setResources] = useState([]);
+  const [loadingList, setLoadingList] = useState(false);
+  const [editingResource, setEditingResource] = useState(null);
+  const [deletingResource, setDeletingResource] = useState(null);
+
+  const fetchResources = useCallback(async () => {
+    if (!subject) { setResources([]); return; }
+    setLoadingList(true);
+    try {
+      const slug = toSlug(subject);
+      const res = await getResources(slug);
+      setResources(res.data || []);
+    } catch {
+      setResources([]);
+    } finally {
+      setLoadingList(false);
+    }
+  }, [subject]);
+
+  useEffect(() => { fetchResources(); }, [fetchResources]);
+
+  return (
+    <FormMotion title="Manage Resources" Icon={IconResources}>
+      {/* Inline subject resource form */}
+      <SubjectResourceFormInline />
+
+      <div className="divider my-6" />
+      <h3 className="text-h4 text-heading dark:text-heading-dark mb-4 flex items-center gap-2">
+        <IconGrid size={18} />
+        Browse Existing Resources
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <SemesterSelect value={semester} onChange={(v) => { setSemester(v); setSubject(""); }} />
+        <SubjectSelect semester={semester} value={subject} onChange={setSubject} />
+      </div>
+
+      {/* Loading skeleton */}
+      {loadingList && (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="resource-list-item">
+              <div className="skeleton skeleton-circle w-9 h-9" />
+              <div className="flex-1 space-y-1.5">
+                <div className="skeleton skeleton-text h-4 w-2/3" />
+                <div className="skeleton skeleton-text h-3 w-1/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loadingList && subject && resources.length === 0 && (
+        <div className="text-center py-8 text-subtle dark:text-subtle-dark">
+          <p className="text-body-sm">No resources found for this subject.</p>
+          <p className="text-caption mt-1">Use the forms above or the sidebar options to add resources.</p>
+        </div>
+      )}
+
+      {/* Resource list */}
+      {!loadingList && resources.length > 0 && (
+        <div className="space-y-2">
+          {resources.map((r) => {
+            const TypeIcon = TYPE_ICONS[r.type] || IconNotes;
+            return (
+              <div key={r._id} className="resource-list-item">
+                <div className="rli-icon"><TypeIcon size={16} /></div>
+                <div className="rli-body">
+                  <div className="rli-title">{r.title}</div>
+                  <div className="rli-meta">{r.type} · {new Date(r.createdAt).toLocaleDateString()}</div>
+                </div>
+                <div className="rli-actions">
+                  <button className="rli-btn" title="Edit" onClick={() => setEditingResource(r)}>
+                    <IconEdit size={15} />
+                  </button>
+                  <button className="rli-btn rli-btn-danger" title="Delete" onClick={() => setDeletingResource(r)}>
+                    <IconTrash size={15} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!loadingList && !subject && semester && (
+        <p className="text-center text-subtle dark:text-subtle-dark text-body-sm py-4">
+          Select a subject to view its resources.
+        </p>
+      )}
+
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {editingResource && (
+          <EditResourceModal
+            resource={editingResource}
+            onClose={() => setEditingResource(null)}
+            onUpdated={(updated) => {
+              setResources((prev) => prev.map((r) => (r._id === updated._id ? updated : r)));
+              setEditingResource(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation */}
+      <AnimatePresence>
+        {deletingResource && (
+          <DeleteResourceModal
+            resource={deletingResource}
+            onClose={() => setDeletingResource(null)}
+            onDeleted={(id) => {
+              setResources((prev) => prev.filter((r) => r._id !== id));
+              setDeletingResource(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </FormMotion>
+  );
+}
+
+
+/* ── Edit Resource Modal ── */
+
+function EditResourceModal({ resource, onClose, onUpdated }) {
+  const [title, setTitle] = useState(resource.title);
+  const [description, setDescription] = useState(resource.description || "");
+  const [type, setType] = useState(resource.type);
+  const [url, setUrl] = useState(resource.url);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await updateResource(resource._id, { title, description, type, url });
+      toast.success("Resource updated!");
+      onUpdated(res.data);
+    } catch (err) {
+      toast.error(err.message || "Failed to update");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+      <motion.div className="modal-content"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.2 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-h3 text-heading dark:text-heading-dark mb-5 flex items-center gap-2">
+          <span className="icon-container-sm"><IconEdit size={18} /></span>
+          Edit Resource
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormInput label="Title" value={title} onChange={setTitle} disabled={loading} required />
+          <FormInput label="Description" placeholder="Optional short description" value={description} onChange={setDescription} disabled={loading} />
+          <div>
+            <label className="input-label">Type</label>
+            <select className="input" value={type} onChange={(e) => setType(e.target.value)} disabled={loading}>
+              <option value="notes">Notes</option>
+              <option value="teacher-notes">Teacher Notes</option>
+              <option value="pyqs">PYQs</option>
+              <option value="books">Books</option>
+              <option value="reference">Reference</option>
+            </select>
+          </div>
+          <FormInput label="URL" type="url" value={url} onChange={setUrl} disabled={loading} required />
+          <div className="flex gap-3 pt-2">
+            <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : "Save Changes"}</button>
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+
+/* ── Delete Confirmation Modal ── */
+
+function DeleteResourceModal({ resource, onClose, onDeleted }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await deleteResource(resource._id);
+      toast.success("Resource deleted");
+      onDeleted(resource._id);
+    } catch (err) {
+      toast.error(err.message || "Failed to delete");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+      <motion.div className="modal-content"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.2 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: "rgba(239, 68, 68, 0.08)" }}>
+            <IconAlertCircle size={28} className="text-error-500" />
+          </div>
+          <h3 className="text-h3 text-heading dark:text-heading-dark mb-2">Delete this resource?</h3>
+          <p className="text-body-sm text-subtle dark:text-subtle-dark mb-1"><strong>&ldquo;{resource.title}&rdquo;</strong></p>
+          <p className="text-body-sm text-subtle dark:text-subtle-dark mb-6">
+            This resource will be permanently removed from the subject page. Students will no longer see it.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button onClick={handleDelete} disabled={loading}
+              className="btn-sm px-5 py-2.5 rounded-xl font-medium text-white bg-error-600 hover:bg-error-700 transition-colors">
+              {loading ? "Deleting…" : "Delete"}
+            </button>
+            <button onClick={onClose} className="btn-secondary btn-sm">Cancel</button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════
+   EXISTING FORM COMPONENTS (preserved)
+   ══════════════════════════════════════════════════════ */
 
 function SemesterForm() {
   const [number, setNumber] = useState("");
@@ -177,15 +468,11 @@ function SemesterForm() {
   };
 
   return (
-    <FormMotion title="📅 Add Semester">
+    <FormMotion title="Add Semester" Icon={IconSemester}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormInput label="Semester Number" type="number" min="1" max="8"
-          placeholder="1-8" value={number} onChange={setNumber} disabled={loading} required />
-        <FormInput label="Semester Name" placeholder="e.g. Sem IV"
-          value={name} onChange={setName} disabled={loading} required />
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Saving…" : "Save Semester"}
-        </button>
+        <FormInput label="Semester Number" type="number" min="1" max="8" placeholder="1-8" value={number} onChange={setNumber} disabled={loading} required />
+        <FormInput label="Semester Name" placeholder="e.g. Sem IV" value={name} onChange={setName} disabled={loading} required />
+        <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : "Save Semester"}</button>
       </form>
     </FormMotion>
   );
@@ -209,22 +496,18 @@ function SubjectForm() {
   };
 
   return (
-    <FormMotion title="📖 Add Subject">
+    <FormMotion title="Add Subject" Icon={IconSubject}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormInput label="Subject Name" placeholder="e.g. Operating Systems"
-          value={name} onChange={setName} disabled={loading} required />
+        <FormInput label="Subject Name" placeholder="e.g. Operating Systems" value={name} onChange={setName} disabled={loading} required />
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Type</label>
+          <label className="input-label">Type</label>
           <select className="input" value={type} onChange={(e) => setType(e.target.value)} disabled={loading}>
             <option value="Theory">Theory</option>
             <option value="Lab">Lab</option>
           </select>
         </div>
-        <FormInput label="Semester Number" type="number" min="1" max="8"
-          placeholder="1-8" value={semester} onChange={setSemester} disabled={loading} required />
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Saving…" : "Save Subject"}
-        </button>
+        <FormInput label="Semester Number" type="number" min="1" max="8" placeholder="1-8" value={semester} onChange={setSemester} disabled={loading} required />
+        <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : "Save Subject"}</button>
       </form>
     </FormMotion>
   );
@@ -232,6 +515,7 @@ function SubjectForm() {
 
 function ResourceForm({ type, label }) {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [subject, setSubject] = useState("");
   const [semester, setSemester] = useState("");
@@ -241,25 +525,22 @@ function ResourceForm({ type, label }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await addResource({ title, type, url, subject, semester: Number(semester) });
+      await addResource({ title, description, type, url, subject, semester: Number(semester) });
       toast.success(`${label} saved!`);
-      setTitle(""); setUrl(""); setSubject(""); setSemester("");
+      setTitle(""); setDescription(""); setUrl(""); setSubject(""); setSemester("");
     } catch (err) { toast.error(err.message || "Failed"); }
     finally { setLoading(false); }
   };
 
   return (
-    <FormMotion title={`Upload ${label}`}>
+    <FormMotion title={`Upload ${label}`} Icon={IconNotes}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormInput label={`${label} Title`} placeholder={`e.g. ${label} name`}
-          value={title} onChange={setTitle} disabled={loading} required />
-        <FormInput label="URL" type="url" placeholder="Google Drive / URL"
-          value={url} onChange={setUrl} disabled={loading} required />
-        <SemesterSelect value={semester} onChange={(value) => { setSemester(value); setSubject(""); }} disabled={loading} required />
+        <FormInput label={`${label} Title`} placeholder={`e.g. ${label} name`} value={title} onChange={setTitle} disabled={loading} required />
+        <FormInput label="Description (optional)" placeholder="Short description" value={description} onChange={setDescription} disabled={loading} />
+        <FormInput label="URL" type="url" placeholder="Google Drive / URL" value={url} onChange={setUrl} disabled={loading} required />
+        <SemesterSelect value={semester} onChange={(v) => { setSemester(v); setSubject(""); }} disabled={loading} required />
         <SubjectSelect semester={semester} value={subject} onChange={setSubject} disabled={loading} required />
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Saving…" : `Save ${label}`}
-        </button>
+        <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : `Save ${label}`}</button>
       </form>
     </FormMotion>
   );
@@ -284,24 +565,19 @@ function PYQForm() {
   };
 
   return (
-    <FormMotion title="📄 Upload PYQs">
+    <FormMotion title="Upload PYQs" Icon={IconFileText}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormInput label="PYQ Title" placeholder="e.g. DBMS 2024"
-          value={title} onChange={setTitle} disabled={loading} required />
-        <FormInput label="URL" type="url" placeholder="Google Drive Link"
-          value={url} onChange={setUrl} disabled={loading} required />
-        <FormInput label="Year" type="number" min="2000" max="2100"
-          placeholder="e.g. 2024" value={year} onChange={setYear} disabled={loading} required />
+        <FormInput label="PYQ Title" placeholder="e.g. DBMS 2024" value={title} onChange={setTitle} disabled={loading} required />
+        <FormInput label="URL" type="url" placeholder="Google Drive Link" value={url} onChange={setUrl} disabled={loading} required />
+        <FormInput label="Year" type="number" min="2000" max="2100" placeholder="e.g. 2024" value={year} onChange={setYear} disabled={loading} required />
         <SemesterSelect value={semester} onChange={setSemester} disabled={loading} />
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Saving…" : "Save PYQ"}
-        </button>
+        <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : "Save PYQ"}</button>
       </form>
     </FormMotion>
   );
 }
 
-function SubjectResourceForm() {
+function SubjectResourceFormInline() {
   const [semester, setSemester] = useState("");
   const [subjectType, setSubjectType] = useState("theory");
   const [subjectName, setSubjectName] = useState("");
@@ -315,44 +591,37 @@ function SubjectResourceForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!semester || !subjectName) {
-      toast.error("Semester and Subject Name are required");
-      return;
-    }
+    if (!semester || !subjectName) { toast.error("Semester and Subject Name are required"); return; }
     setLoading(true);
     try {
-      const payload = {
-        semesterNumber: Number(semester),
-        subjectName,
-        subjectSlug: toSlug(subjectName),
-        subjectType,
-        notesLinks: notesLink ? [notesLink] : [],
-        teacherNotesLinks: teacherNotesLink ? [teacherNotesLink] : [],
-        pyqLinks: pyqLink ? [pyqLink] : [],
-        bookLinks: bookLink ? [bookLink] : [],
+      await createSubject({
+        semesterNumber: Number(semester), subjectName, subjectSlug: toSlug(subjectName), subjectType,
+        notesLinks: notesLink ? [notesLink] : [], teacherNotesLinks: teacherNotesLink ? [teacherNotesLink] : [],
+        pyqLinks: pyqLink ? [pyqLink] : [], bookLinks: bookLink ? [bookLink] : [],
         referenceLinks: refTitle && refUrl ? [{ title: refTitle, url: refUrl }] : [],
-      };
-      await createSubject(payload);
+      });
       toast.success("Subject resources saved!");
-      setSemester(""); setSubjectName(""); setNotesLink("");
-      setTeacherNotesLink(""); setPyqLink(""); setBookLink("");
-      setRefTitle(""); setRefUrl("");
+      setSemester(""); setSubjectName(""); setNotesLink(""); setTeacherNotesLink("");
+      setPyqLink(""); setBookLink(""); setRefTitle(""); setRefUrl("");
     } catch (err) { toast.error(err.message || "Failed"); }
     finally { setLoading(false); }
   };
 
   return (
-    <FormMotion title="📦 Manage Subject Resources">
+    <>
+      <h3 className="text-h4 text-heading dark:text-heading-dark mb-4 flex items-center gap-2">
+        <IconSubject size={18} /> Add Subject Resources
+      </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Semester</label>
+          <label className="input-label">Semester</label>
           <select className="input" value={semester} onChange={(e) => { setSemester(e.target.value); setSubjectName(""); }} disabled={loading} required>
             <option value="">Select Semester</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <option key={n} value={n}>Semester {n}</option>)}
+            {[1,2,3,4,5,6,7,8].map((n) => <option key={n} value={n}>Semester {n}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject Type</label>
+          <label className="input-label">Subject Type</label>
           <select className="input" value={subjectType} onChange={(e) => { setSubjectType(e.target.value); setSubjectName(""); }} disabled={loading}>
             <option value="theory">Theory</option>
             <option value="lab">Lab</option>
@@ -362,41 +631,36 @@ function SubjectResourceForm() {
         </div>
         <SubjectSelect semester={semester} type={subjectType} value={subjectName} onChange={setSubjectName} disabled={loading} required />
 
-        <div className="h-px bg-gray-200 dark:bg-gray-700 my-2" />
-        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Resource Links (optional — add any combination)</p>
+        <div className="divider my-2" />
+        <p className="text-caption text-subtle dark:text-subtle-dark uppercase tracking-wider font-medium">
+          Resource Links (optional — add any combination)
+        </p>
+        <FormInput label="Notes Link" type="url" placeholder="Google Drive / URL" value={notesLink} onChange={setNotesLink} disabled={loading} />
+        <FormInput label="Teacher Notes Link" type="url" placeholder="Google Drive / URL" value={teacherNotesLink} onChange={setTeacherNotesLink} disabled={loading} />
+        <FormInput label="PYQ Link" type="url" placeholder="Google Drive / URL" value={pyqLink} onChange={setPyqLink} disabled={loading} />
+        <FormInput label="Book Link" type="url" placeholder="Google Drive / URL" value={bookLink} onChange={setBookLink} disabled={loading} />
 
-        <FormInput label="Notes Link" type="url" placeholder="Google Drive / URL"
-          value={notesLink} onChange={setNotesLink} disabled={loading} />
-        <FormInput label="Teacher Notes Link" type="url" placeholder="Google Drive / URL"
-          value={teacherNotesLink} onChange={setTeacherNotesLink} disabled={loading} />
-        <FormInput label="PYQ Link" type="url" placeholder="Google Drive / URL"
-          value={pyqLink} onChange={setPyqLink} disabled={loading} />
-        <FormInput label="Book Link" type="url" placeholder="Google Drive / URL"
-          value={bookLink} onChange={setBookLink} disabled={loading} />
+        <div className="divider my-2" />
+        <p className="text-caption text-subtle dark:text-subtle-dark uppercase tracking-wider font-medium">Reference Link (optional)</p>
+        <FormInput label="Reference Title" placeholder="e.g. GeeksForGeeks Tutorial" value={refTitle} onChange={setRefTitle} disabled={loading} />
+        <FormInput label="Reference URL" type="url" placeholder="https://..." value={refUrl} onChange={setRefUrl} disabled={loading} />
 
-        <div className="h-px bg-gray-200 dark:bg-gray-700 my-2" />
-        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Reference Link (optional)</p>
-        <FormInput label="Reference Title" placeholder="e.g. GeeksForGeeks Tutorial"
-          value={refTitle} onChange={setRefTitle} disabled={loading} />
-        <FormInput label="Reference URL" type="url" placeholder="https://..."
-          value={refUrl} onChange={setRefUrl} disabled={loading} />
-
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Saving…" : "Save Resources"}
-        </button>
+        <button type="submit" disabled={loading} className="btn-primary">{loading ? "Saving…" : "Save Resources"}</button>
       </form>
-    </FormMotion>
+    </>
   );
 }
 
-// ── Shared Helpers ──
 
-function FormMotion({ title, children }) {
+/* ── Shared Helpers ── */
+
+function FormMotion({ title, Icon, children }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }}
-    >
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">{title}</h2>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }}>
+      <h2 className="text-h3 text-heading dark:text-heading-dark mb-6 flex items-center gap-2.5">
+        {Icon && <span className="icon-container-sm"><Icon size={18} /></span>}
+        {title}
+      </h2>
       {children}
     </motion.div>
   );
@@ -405,12 +669,10 @@ function FormMotion({ title, children }) {
 function SemesterSelect({ value, onChange, disabled, required }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Semester</label>
+      <label className="input-label">Semester</label>
       <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required}>
         <option value="">Select Semester</option>
-        {Object.keys(semesterSubjects).map((semester) => (
-          <option key={semester} value={semester}>Semester {semester}</option>
-        ))}
+        {Object.keys(semesterSubjects).map((s) => <option key={s} value={s}>Semester {s}</option>)}
       </select>
     </div>
   );
@@ -422,14 +684,12 @@ function SubjectSelect({ semester, type, value, onChange, disabled, required }) 
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject</label>
+      <label className="input-label">Subject</label>
       <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled || !semester} required={required}>
         <option value="">{semester ? "Select Subject" : "Select semester first"}</option>
         {groups.map(([group, subjects]) => (
           <optgroup key={group} label={group.charAt(0).toUpperCase() + group.slice(1)}>
-            {subjects.map((subjectName) => (
-              <option key={`${group}-${subjectName}`} value={subjectName}>{subjectName}</option>
-            ))}
+            {subjects.map((name) => <option key={`${group}-${name}`} value={name}>{name}</option>)}
           </optgroup>
         ))}
       </select>
@@ -440,10 +700,9 @@ function SubjectSelect({ semester, type, value, onChange, disabled, required }) 
 function FormInput({ label, type = "text", placeholder, value, onChange, disabled, required, min, max }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{label}</label>
+      <label className="input-label">{label}</label>
       <input type={type} className="input" placeholder={placeholder} value={value}
-        onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required}
-        min={min} max={max} />
+        onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required} min={min} max={max} />
     </div>
   );
 }

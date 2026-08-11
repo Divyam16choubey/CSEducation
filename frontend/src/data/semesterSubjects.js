@@ -89,9 +89,9 @@ export const semesterSubjects = {
         theory: [
             "Computer Graphics",
             "Machine Learning",
-            "Department Elective I",
-            "Department Elective II",
-            "Department Elective III",
+            "Natural Language Processing",
+            "Computer & Network Security",
+            "Digital Image Processing",
         ],
         lab: [
             "Computer Graphics Lab",

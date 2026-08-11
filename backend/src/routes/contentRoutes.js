@@ -9,6 +9,8 @@ const {
     addSubject,
     getResources,
     addResource,
+    updateResource,
+    deleteResource,
     getPYQYears,
     getPYQs,
 } = require("../controllers/contentController");
@@ -24,6 +26,8 @@ router.post("/subjects", auth, addSubject);
 // ── Resources ──
 router.get("/resources/:subjectId", getResources);
 router.post("/resources", auth, addResource);
+router.put("/resources/:id", auth, updateResource);
+router.delete("/resources/:id", auth, deleteResource);
 
 // ── PYQs ──
 router.get("/pyqs/years", getPYQYears);
@@ -31,3 +35,4 @@ router.get("/pyqs/:year", getPYQs);
 router.post("/pyqs", auth, addResource); // PYQs are resources with type "pyqs"
 
 module.exports = router;
+
