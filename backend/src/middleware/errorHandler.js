@@ -45,8 +45,16 @@ module.exports = function errorHandler(err, req, res, next) {
     });
   }
 
-  // Custom status code or default to 500
-  const statusCode = err.statusCode || res.statusCode === 200 ? 500 : res.statusCode;
+  // CORS policy rejection
+  if (err.message && err.message.includes("Blocked by CORS policy")) {
+    return res.status(403).json({
+      success: false,
+      message: "Cross-Origin Request Blocked by CORS policy",
+    });
+  }
+
+  // Custom status code or fallback (avoiding operator precedence bug)
+  const statusCode = err.statusCode || (res.statusCode && res.statusCode !== 200 ? res.statusCode : 500);
   const message = statusCode === 500 ? "Internal server error" : (err.message || "Request failed");
 
   res.status(statusCode).json({

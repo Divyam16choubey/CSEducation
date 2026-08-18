@@ -18,4 +18,7 @@ const contactSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Index for chronological retrieval
+contactSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Contact", contactSchema);

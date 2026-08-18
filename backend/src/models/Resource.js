@@ -35,4 +35,9 @@ const resourceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for query performance
+resourceSchema.index({ type: 1, year: 1 });
+resourceSchema.index({ subject: 1, type: 1 });
+resourceSchema.index({ semester: 1 });
+
 module.exports = mongoose.model("Resource", resourceSchema);

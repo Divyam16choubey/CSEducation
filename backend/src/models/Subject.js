@@ -40,4 +40,7 @@ const subjectSchema = new mongoose.Schema({
   },
 });
 
+// Index for semester-wise querying
+subjectSchema.index({ semesterNumber: 1 });
+
 module.exports = mongoose.model("Subject", subjectSchema);

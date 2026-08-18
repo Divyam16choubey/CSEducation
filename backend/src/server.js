@@ -11,6 +11,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust reverse proxy (Render, Vercel, Nginx) for accurate client IP rate limiting
+app.set("trust proxy", 1);
+
 // ── Security Headers ──
 app.use(
   helmet({
