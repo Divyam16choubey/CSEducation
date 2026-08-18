@@ -18,7 +18,7 @@ const resourceLinks = [
 ];
 
 const connectLinks = [
-  { Icon: IconGlobe, label: "GitHub", href: "https://github.com", display: "GitHub" },
+  { Icon: IconGlobe, label: "GitHub", href: "https://github.com/Divyam16choubey/CSEducation", display: "GitHub" },
   { Icon: IconMail, label: "Email", href: "mailto:cse2023nitmn@gmail.com", display: "Email" },
   { Icon: IconMessageCircle, label: "Feedback", to: "/contact", display: "Send Feedback" },
 ];
