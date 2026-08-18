@@ -12,6 +12,7 @@ import {
 } from "../api/contentService";
 import { createSubject } from "../api/subjectApi";
 import { semesterSubjects, toSlug } from "../data/semesterSubjects";
+import useDocTitle from "../hooks/useDocTitle";
 import toast from "react-hot-toast";
 import {
   IconSemester,
@@ -56,6 +57,7 @@ export default function AdminDashboard() {
   const [activeForm, setActiveForm] = useState(null);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const navigate = useNavigate();
+  useDocTitle("Admin Dashboard");
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
@@ -698,10 +700,11 @@ function SubjectSelect({ semester, type, value, onChange, disabled, required }) 
 }
 
 function FormInput({ label, type = "text", placeholder, value, onChange, disabled, required, min, max }) {
+  const inputId = `admin-${label.toLowerCase().replace(/\s+/g, "-")}`;
   return (
     <div>
-      <label className="input-label">{label}</label>
-      <input type={type} className="input" placeholder={placeholder} value={value}
+      <label htmlFor={inputId} className="input-label">{label}</label>
+      <input id={inputId} type={type} className="input" placeholder={placeholder} value={value}
         onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required} min={min} max={max} />
     </div>
   );

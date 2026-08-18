@@ -3,14 +3,16 @@ import { motion } from "framer-motion";
 import { getPYQYears } from "../api/contentService";
 import { fadeUp, staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
+import useDocTitle from "../hooks/useDocTitle";
 import SkeletonCard from "../components/SkeletonCard";
-import { IconPYQ } from "../components/icons";
+import { IconPYQ, IconAlertCircle } from "../components/icons";
 
 const FALLBACK_YEARS = [2021, 2022, 2023, 2024, 2025, 2026];
 
 export default function PYQLanding() {
-  const { data, loading, error } = useApi(() => getPYQYears(), []);
+  const { data, loading, error, refetch } = useApi(() => getPYQYears(), []);
   const years = data && data.length > 0 ? data : FALLBACK_YEARS;
+  useDocTitle("Previous Year Questions");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--color-background)" }}>
@@ -31,10 +33,21 @@ export default function PYQLanding() {
         )}
 
         {error && !loading && (
-          <p className="text-center text-error-500 mb-6">{error}</p>
+          <div className="error-state">
+            <div className="error-icon">
+              <IconAlertCircle size={28} />
+            </div>
+            <div className="error-title">Unable to load PYQ years</div>
+            <div className="error-description">
+              We couldn't fetch the available years. Please check your connection and try again.
+            </div>
+            <button onClick={refetch} className="btn-primary btn-sm">
+              Try Again
+            </button>
+          </div>
         )}
 
-        {!loading && (
+        {!loading && !error && (
           <motion.div variants={staggerContainer} initial="hidden" animate="visible"
             className="max-w-narrow mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
           >

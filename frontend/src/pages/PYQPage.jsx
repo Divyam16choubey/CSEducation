@@ -5,11 +5,13 @@ import SkeletonCard from "../components/SkeletonCard";
 import { getPYQs } from "../api/contentService";
 import { fadeUp, staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
-import { IconFileText, IconEmptyState } from "../components/icons";
+import useDocTitle from "../hooks/useDocTitle";
+import { IconFileText, IconEmptyState, IconAlertCircle } from "../components/icons";
 
 export default function PYQPage() {
   const { year } = useParams();
-  const { data, loading, error } = useApi(() => getPYQs(year), [year]);
+  const { data, loading, error, refetch } = useApi(() => getPYQs(year), [year]);
+  useDocTitle(`PYQs – ${year}`);
 
   const breadcrumbItems = [
     { label: "Home", to: "/" },
@@ -48,7 +50,18 @@ export default function PYQPage() {
           )}
 
           {error && !loading && (
-            <p className="text-center text-error-500 mb-6">{error}</p>
+            <div className="error-state">
+              <div className="error-icon">
+                <IconAlertCircle size={28} />
+              </div>
+              <div className="error-title">Unable to load question papers</div>
+              <div className="error-description">
+                We couldn't fetch papers for {year}. Please check your connection and try again.
+              </div>
+              <button onClick={refetch} className="btn-primary btn-sm">
+                Try Again
+              </button>
+            </div>
           )}
 
           {!loading && data && data.length > 0 && (

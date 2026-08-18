@@ -333,4 +333,158 @@ CSEducation demonstrates a production-grade implementation of the MERN stack, so
 
 The platform is designed to be immediately useful for students while remaining maintainable and extensible for future development.
 
+---
 
+## 13. Developer & Deployment Guide
+
+### Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **MongoDB Atlas** account (or local MongoDB v6+)
+
+---
+
+### Project Structure
+```
+CSEducation/
+├── backend/                  # Node.js + Express REST API
+│   ├── src/
+│   │   ├── config/           # Database configuration
+│   │   ├── controllers/      # Route controllers with input validation
+│   │   ├── middleware/       # Auth, Rate limiting, and Error handling
+│   │   ├── models/           # Mongoose schemas (Admin, Subject, Resource, etc.)
+│   │   ├── routes/           # Express route definitions
+│   │   ├── scripts/          # CLI scripts (createAdmin.js)
+│   │   └── server.js         # Server entry point with Helmet and CORS
+│   ├── .env.example          # Environment variable template
+│   └── package.json
+│
+├── frontend/                 # React 18 + Vite SPA
+│   ├── src/
+│   │   ├── api/              # Axios instance and API service modules
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # Page views (Home, Semester, Subject, PYQs, Admin)
+│   │   ├── hooks/            # Custom hooks (useApi, useDocTitle)
+│   │   └── index.css         # Token-based CSS design system
+│   ├── .env.example          # Frontend environment template
+│   ├── vercel.json           # SPA routing rewrite configuration
+│   └── package.json
+│
+├── render.yaml               # Backend Render deployment specification
+└── README.md
+```
+
+---
+
+### Local Environment Setup
+
+#### 1. Backend Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create your local environment file:
+   ```bash
+   cp .env.example .env
+   ```
+4. Fill in the environment variables in `.env`:
+   - `PORT=5000`
+   - `MONGO_URI=<your-mongodb-atlas-connection-string>`
+   - `JWT_SECRET=<cryptographically-secure-random-string>`
+   - `CORS_ORIGIN=http://localhost:5173`
+
+5. Create your initial administrator account via CLI:
+   ```bash
+   npm run create-admin <username> <password>
+   ```
+
+6. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   *The backend will run on `http://localhost:5000`.*
+
+---
+
+#### 2. Frontend Setup
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create your local environment file:
+   ```bash
+   cp .env.example .env
+   ```
+4. Configure `.env`:
+   ```env
+   VITE_API_BASE_URL=http://localhost:5000/api
+   ```
+5. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   *The application will be accessible at `http://localhost:5173`.*
+
+---
+
+### Production Build & Verification
+
+#### Build Frontend:
+```bash
+cd frontend
+npm run build
+```
+*Outputs production bundle to `frontend/dist`.*
+
+#### Run Backend in Production Mode:
+```bash
+cd backend
+npm start
+```
+
+---
+
+### Production Deployment
+
+#### 1. Backend Deployment (Render)
+1. Push the repository to GitHub.
+2. Log into [Render Dashboard](https://render.com) and create a **New Web Service**.
+3. Connect your repository.
+4. Set root directory to `backend`.
+5. Set Build Command: `npm install`
+6. Set Start Command: `npm start`
+7. Add Environment Variables in Render:
+   - `NODE_ENV`: `production`
+   - `PORT`: `10000`
+   - `MONGO_URI`: *Your production MongoDB Atlas connection string*
+   - `JWT_SECRET`: *A secure 32+ character random string*
+   - `CORS_ORIGIN`: `https://your-frontend.vercel.app`
+
+*(Alternatively, use the included `render.yaml` blueprint).*
+
+#### 2. Frontend Deployment (Vercel)
+1. Log into [Vercel Dashboard](https://vercel.com) and click **Add New Project**.
+2. Select your repository.
+3. Set **Root Directory** to `frontend`.
+4. Framework Preset: **Vite**.
+5. Add Environment Variable:
+   - `VITE_API_BASE_URL`: `https://your-backend-name.onrender.com/api`
+6. Deploy. The included `frontend/vercel.json` ensures that direct navigation and page reloads on all SPA routes (`/semester/3`, `/pyqs`, `/admin`, etc.) work without 404 errors.
+
+---
+
+### Security Checklist for Production
+- [x] **Admin Registration Gated**: `POST /api/admin/register` requires existing admin JWT authentication. Initial admin creation uses offline CLI script.
+- [x] **Rate Limiting Active**: Login and contact endpoints are protected from automated brute force attacks via `express-rate-limit`.
+- [x] **Security Headers**: `helmet` is enabled on all backend responses.
+- [x] **CORS Restricted**: Backend only accepts requests from explicitly configured `CORS_ORIGIN` domains.
+- [x] **Input Sanitization**: All controller endpoints enforce length boundaries, regex validation, and type checking.
+- [x] **Credential Rotation Required**: Rotate MongoDB Atlas database user passwords and JWT secret in production hosting dashboard prior to public release.

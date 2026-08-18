@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginAdmin } from "../api/adminService";
+import useDocTitle from "../hooks/useDocTitle";
 import toast from "react-hot-toast";
 import { IconShield } from "../components/icons";
 
@@ -10,6 +11,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  useDocTitle("Admin Login");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,17 +54,17 @@ export default function AdminLogin() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="input-label">Username</label>
-              <input type="text" className="input" placeholder="Enter username"
+              <label htmlFor="admin-username" className="input-label">Username</label>
+              <input id="admin-username" type="text" className="input" placeholder="Enter username"
                 value={username} onChange={(e) => setUsername(e.target.value)}
-                required disabled={loading} />
+                required disabled={loading} autoComplete="username" />
             </div>
 
             <div>
-              <label className="input-label">Password</label>
-              <input type="password" className="input" placeholder="Enter password"
+              <label htmlFor="admin-password" className="input-label">Password</label>
+              <input id="admin-password" type="password" className="input" placeholder="Enter password"
                 value={password} onChange={(e) => setPassword(e.target.value)}
-                required disabled={loading} />
+                required disabled={loading} autoComplete="current-password" />
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full">

@@ -7,6 +7,7 @@ import { getSubjects } from "../api/contentService";
 import { fetchSemesterSubjects } from "../api/subjectApi";
 import { staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
+import useDocTitle from "../hooks/useDocTitle";
 import { semesterSubjects, toSlug } from "../data/semesterSubjects";
 import { IconSubject, IconLab, IconProject, IconAlertCircle, IconEmptyState } from "../components/icons";
 
@@ -38,6 +39,7 @@ export default function SemesterPage() {
   const semId = Number(id);
   const { data, loading, error, refetch } = useApi(() => getSubjects(id), [id]);
   const { data: subjectData } = useApi(() => fetchSemesterSubjects(id), [id]);
+  useDocTitle(`Semester ${ROMAN[semId - 1] || id}`);
 
   const resourceCountMap = {};
   if (subjectData && subjectData.length > 0) {

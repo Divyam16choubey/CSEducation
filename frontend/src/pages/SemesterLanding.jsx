@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { getSemesters } from "../api/contentService";
 import { fadeUp, staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
+import useDocTitle from "../hooks/useDocTitle";
 import SkeletonCard from "../components/SkeletonCard";
 import Breadcrumb from "../components/Breadcrumb";
 import { IconSemester, IconAlertCircle } from "../components/icons";
@@ -39,6 +40,7 @@ const breadcrumbItems = [
 export default function SemesterLanding() {
   const { data, loading, error, refetch } = useApi(() => getSemesters(), []);
   const semesters = data && data.length > 0 ? data : FALLBACK_SEMESTERS;
+  useDocTitle("Semesters");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--color-background)" }}>

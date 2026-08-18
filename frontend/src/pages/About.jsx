@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "../animations/motion";
+import useDocTitle from "../hooks/useDocTitle";
 import { IconCode, IconNotes, IconBooks, IconShield, IconGlobe, IconClock, IconArrowRight, IconLink } from "../components/icons";
 
 const techStack = [
   { Icon: IconCode, name: "React", desc: "Component-based UI library" },
-  { Icon: IconNotes, name: "Tailwind CSS", desc: "Utility-first styling" },
+  { Icon: IconNotes, name: "CSS Design System", desc: "Custom design tokens & utilities" },
   { Icon: IconGlobe, name: "Node.js", desc: "JavaScript runtime" },
   { Icon: IconLink, name: "Express.js", desc: "Backend framework" },
   { Icon: IconBooks, name: "MongoDB", desc: "NoSQL database" },
@@ -20,6 +21,7 @@ const objectives = [
 ];
 
 export default function About() {
+  useDocTitle("About");
   return (
     <div className="min-h-screen" style={{ background: "var(--color-background)" }}>
       {/* Hero */}

@@ -16,11 +16,14 @@ import {
   IconCode,
 } from "../components/icons";
 import Logo from "../components/Logo";
+import useDocTitle from "../hooks/useDocTitle";
 
 /* ──────────────────────────────────────
    DATA — unchanged from original
    ────────────────────────────────────── */
 
+/* Static landing page stats — intentional marketing values.
+   These are not dynamically fetched for landing page performance. */
 const stats = [
   { icon: IconSemester, value: "8", label: "Semesters", suffix: "" },
   { icon: IconSubject, value: "50", label: "Resources", suffix: "+" },
@@ -211,6 +214,7 @@ function HeroIllustration() {
    ────────────────────────────────────── */
 
 export default function Home() {
+  useDocTitle(""); /* Home uses base title */
   return (
     <div className="min-h-screen">
       {/* ── Hero Section ── */}

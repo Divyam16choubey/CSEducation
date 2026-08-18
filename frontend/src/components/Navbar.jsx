@@ -19,9 +19,10 @@ export default function Navbar() {
     setScrolled(window.scrollY > 10);
   }, []);
 
+  /* Theme initialization — respect OS preference on first visit */
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
+    if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
       document.documentElement.classList.add("dark");
       setDark(true);
     }
@@ -38,6 +39,12 @@ export default function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
+
+  /* Body scroll lock when mobile menu is open */
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   /* Close menus on navigation */
   useEffect(() => {
@@ -64,6 +71,23 @@ export default function Navbar() {
     document.documentElement.classList.toggle("dark", next);
     localStorage.setItem("theme", next ? "dark" : "light");
     setDark(next);
+  };
+
+  /* Keyboard navigation for dropdown menus */
+  const handleDropdownKeyDown = (e, items, closeDropdown) => {
+    const focusable = items;
+    const idx = focusable.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = idx < focusable.length - 1 ? idx + 1 : 0;
+      focusable[next]?.focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const prev = idx > 0 ? idx - 1 : focusable.length - 1;
+      focusable[prev]?.focus();
+    } else if (e.key === "Escape" || e.key === "Tab") {
+      closeDropdown();
+    }
   };
 
   const semesters = ["Sem I", "Sem II", "Sem III", "Sem IV", "Sem V", "Sem VI", "Sem VII", "Sem VIII"];
@@ -136,6 +160,7 @@ export default function Navbar() {
                   role="menu"
                   style={{ width: "320px" }}
                   onMouseLeave={() => setOpenSem(false)}
+                  onKeyDown={(e) => handleDropdownKeyDown(e, [...(semRef.current?.querySelectorAll('[role="menuitem"]') || [])], () => setOpenSem(false))}
                 >
                   <div className="grid grid-cols-2 gap-0.5">
                     {semesters.map((s, i) => (
@@ -168,6 +193,7 @@ export default function Navbar() {
                   role="menu"
                   style={{ width: "160px" }}
                   onMouseLeave={() => setOpenPyq(false)}
+                  onKeyDown={(e) => handleDropdownKeyDown(e, [...(pyqRef.current?.querySelectorAll('[role="menuitem"]') || [])], () => setOpenPyq(false))}
                 >
                   {pyqYears.map(y => (
                     <Link key={y} to={`/pyqs/${y}`}

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import useDocTitle from "../hooks/useDocTitle";
 import { IconHome } from "../components/icons";
 
 export default function NotFound() {
+  useDocTitle("Page Not Found");
   return (
     <div className="min-h-screen flex items-center justify-center px-6"
       style={{ background: "var(--color-background)" }}

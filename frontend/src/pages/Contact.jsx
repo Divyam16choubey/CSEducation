@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { submitContact } from "../api/contactService";
+import useDocTitle from "../hooks/useDocTitle";
 import toast from "react-hot-toast";
 import { IconUpload, IconMail, IconBuilding, IconClock } from "../components/icons";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
+  useDocTitle("Contact");
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -116,20 +118,20 @@ export default function Contact() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="input-label">Your Name</label>
-                  <input type="text" name="name" className="input" placeholder="Enter your name"
+                  <label htmlFor="contact-name" className="input-label">Your Name</label>
+                  <input id="contact-name" type="text" name="name" className="input" placeholder="Enter your name"
                     value={form.name} onChange={handleChange} required disabled={loading} />
                 </div>
 
                 <div>
-                  <label className="input-label">Your Email</label>
-                  <input type="email" name="email" className="input" placeholder="Enter your email"
+                  <label htmlFor="contact-email" className="input-label">Your Email</label>
+                  <input id="contact-email" type="email" name="email" className="input" placeholder="Enter your email"
                     value={form.email} onChange={handleChange} required disabled={loading} />
                 </div>
 
                 <div>
-                  <label className="input-label">Message</label>
-                  <textarea rows="5" name="message" className="input" placeholder="Write your message or suggestion..."
+                  <label htmlFor="contact-message" className="input-label">Message</label>
+                  <textarea id="contact-message" rows="5" name="message" className="input" placeholder="Write your message or suggestion..."
                     value={form.message} onChange={handleChange} required disabled={loading} />
                 </div>
 

@@ -1,9 +1,17 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import ScrollProgress from "./components/ScrollProgress";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+/* Scroll to top on route change */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 import Home from "./pages/Home";
 import SemesterLanding from "./pages/SemesterLanding";
@@ -23,6 +31,7 @@ import NotFound from "./pages/NotFound";
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <ScrollProgress />
       <Toaster position="top-right" toastOptions={{
         duration: 3000,

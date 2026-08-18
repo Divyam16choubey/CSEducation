@@ -8,6 +8,7 @@ import { getResources } from "../api/contentService";
 import { fetchSubjectBySlug } from "../api/subjectApi";
 import { staggerContainer } from "../animations/motion";
 import useApi from "../hooks/useApi";
+import useDocTitle from "../hooks/useDocTitle";
 import {
   IconNotes, IconTeacher, IconPYQ, IconBooks, IconLink,
   IconGlobe, IconYoutube, IconEmptyState, IconAlertCircle, IconArrowRight,
@@ -48,6 +49,7 @@ export default function SubjectPage() {
   const { data: subject, loading: subjectLoading, error: subjectError } = useApi(() => fetchSubjectBySlug(id), [id]);
   const { data: uploadedResources, loading: resourcesLoading, error: resourcesError, refetch } = useApi(() => getResources(id), [id]);
   const loading = subjectLoading || resourcesLoading;
+  useDocTitle(subject?.subjectName || displayName);
 
   /* ── Build breadcrumb with semester context ── */
   const semNum = subject?.semesterNumber;
