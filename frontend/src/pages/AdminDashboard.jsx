@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import Logo from "../components/Logo";
 import {
   addSemester,
   addSubject,
@@ -11,6 +12,7 @@ import {
   deleteResource,
 } from "../api/contentService";
 import { createSubject } from "../api/subjectApi";
+import { getContacts } from "../api/contactService";
 import { semesterSubjects, toSlug } from "../data/semesterSubjects";
 import useDocTitle from "../hooks/useDocTitle";
 import toast from "react-hot-toast";
@@ -33,6 +35,7 @@ import {
   IconTrash,
   IconPYQ,
   IconAlertCircle,
+  IconMail,
 } from "../components/icons";
 
 const sidebarItems = [
@@ -43,6 +46,7 @@ const sidebarItems = [
   { key: "pyqs", label: "Upload PYQs", Icon: IconFileText },
   { key: "books", label: "Upload Books", Icon: IconBooks },
   { key: "links", label: "Add References", Icon: IconLink },
+  { key: "feedback", label: "Student Feedback", Icon: IconMail },
 ];
 
 const TYPE_ICONS = {
@@ -77,12 +81,13 @@ export default function AdminDashboard() {
           }}
         >
           <div className="mb-6 px-3">
-            <h2 className="text-h4 text-heading dark:text-heading-dark flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-primary-600 text-white text-sm flex items-center justify-center">
-                <IconSettings size={16} />
-              </span>
-              Admin Panel
-            </h2>
+            <Link to="/" className="inline-block" aria-label="CSEducation home">
+              <Logo variant="horizontal" size="sm" />
+            </Link>
+            <div className="mt-2 text-[11px] font-semibold uppercase tracking-wider text-subtle dark:text-subtle-dark flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-primary-500 inline-block" />
+              Admin Portal
+            </div>
           </div>
 
           <nav className="space-y-1 flex-1">
@@ -115,13 +120,18 @@ export default function AdminDashboard() {
         <main className="flex-1 p-6 lg:p-10">
           {/* Mobile header */}
           <div className="lg:hidden flex items-center justify-between mb-6">
-            <button
-              onClick={() => setMobileSidebar(!mobileSidebar)}
-              className="btn-secondary btn-sm gap-2"
-            >
-              {mobileSidebar ? <IconClose size={16} /> : <IconMenu size={16} />}
-              Menu
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMobileSidebar(!mobileSidebar)}
+                className="btn-secondary btn-sm gap-2"
+              >
+                {mobileSidebar ? <IconClose size={16} /> : <IconMenu size={16} />}
+                Menu
+              </button>
+              <Link to="/" aria-label="CSEducation home">
+                <Logo variant="horizontal" size="xs" />
+              </Link>
+            </div>
             <button
               onClick={handleLogout}
               className="btn-sm text-error-600 dark:text-error-500
@@ -198,6 +208,7 @@ export default function AdminDashboard() {
               {activeForm === "pyqs" && <PYQForm key="pyqs" />}
               {activeForm === "books" && <ResourceForm key="books" type="books" label="Book" />}
               {activeForm === "links" && <ResourceForm key="links" type="reference" label="Reference Link" />}
+              {activeForm === "feedback" && <FeedbackPanel key="feedback" />}
             </AnimatePresence>
           </div>
         </main>
@@ -654,6 +665,90 @@ function SubjectResourceFormInline() {
 }
 
 
+/* ══════════════════════════════════════════════════════
+   STUDENT FEEDBACK PANEL
+   ══════════════════════════════════════════════════════ */
+
+function FeedbackPanel() {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchFeedback = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await getContacts();
+      setMessages(res.data?.data || res.data || []);
+    } catch {
+      setMessages([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFeedback();
+  }, [fetchFeedback]);
+
+  return (
+    <FormMotion title="Student Feedback & Messages" Icon={IconMail}>
+      <p className="text-body-sm text-subtle dark:text-subtle-dark mb-6">
+        Review messages, resource submissions, and feedback submitted by students through the Contact page.
+      </p>
+
+      {loading && (
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="card-static space-y-2">
+              <div className="skeleton skeleton-text h-4 w-1/3" />
+              <div className="skeleton skeleton-text h-3 w-1/4" />
+              <div className="skeleton skeleton-text h-12 w-full" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && messages.length === 0 && (
+        <div className="text-center py-12 text-subtle dark:text-subtle-dark">
+          <div className="icon-container-lg mx-auto mb-3 text-muted dark:text-muted-dark">
+            <IconMail size={24} />
+          </div>
+          <p className="text-h4 text-heading dark:text-heading-dark">No messages yet</p>
+          <p className="text-body-sm mt-1">Student submissions from the Contact form will appear here.</p>
+        </div>
+      )}
+
+      {!loading && messages.length > 0 && (
+        <div className="space-y-4">
+          {messages.map((m) => (
+            <div key={m._id || m.createdAt} className="card-bordered space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <div>
+                  <span className="font-semibold text-heading dark:text-heading-dark text-body-sm mr-2">
+                    {m.name}
+                  </span>
+                  <a
+                    href={`mailto:${m.email}`}
+                    className="text-caption text-primary-600 dark:text-primary-400 hover:underline"
+                  >
+                    {m.email}
+                  </a>
+                </div>
+                <span className="text-caption text-subtle dark:text-subtle-dark">
+                  {m.createdAt ? new Date(m.createdAt).toLocaleString() : ""}
+                </span>
+              </div>
+              <p className="text-body-sm text-subtle dark:text-subtle-dark whitespace-pre-wrap leading-relaxed">
+                {m.message}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </FormMotion>
+  );
+}
+
+
 /* ── Shared Helpers ── */
 
 function FormMotion({ title, Icon, children }) {
@@ -671,8 +766,8 @@ function FormMotion({ title, Icon, children }) {
 function SemesterSelect({ value, onChange, disabled, required }) {
   return (
     <div>
-      <label className="input-label">Semester</label>
-      <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required}>
+      <label htmlFor="admin-semester-select" className="input-label">Semester</label>
+      <select id="admin-semester-select" className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} required={required}>
         <option value="">Select Semester</option>
         {Object.keys(semesterSubjects).map((s) => <option key={s} value={s}>Semester {s}</option>)}
       </select>
@@ -686,8 +781,8 @@ function SubjectSelect({ semester, type, value, onChange, disabled, required }) 
 
   return (
     <div>
-      <label className="input-label">Subject</label>
-      <select className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled || !semester} required={required}>
+      <label htmlFor="admin-subject-select" className="input-label">Subject</label>
+      <select id="admin-subject-select" className="input" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled || !semester} required={required}>
         <option value="">{semester ? "Select Subject" : "Select semester first"}</option>
         {groups.map(([group, subjects]) => (
           <optgroup key={group} label={group.charAt(0).toUpperCase() + group.slice(1)}>

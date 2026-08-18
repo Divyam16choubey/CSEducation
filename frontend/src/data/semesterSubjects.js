@@ -112,7 +112,8 @@ export const semesterSubjects = {
 };
 
 /** Convert subject name → URL slug: "OOPs with JAVA" → "oops-with-java" */
-export const toSlug = (name) => name.replace(/\s+/g, "-").toLowerCase();
+export const toSlug = (name) =>
+    (name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /** Convert URL slug → display name: "oops-with-java" → "Oops With Java" */
 export const toDisplayName = (slug) =>

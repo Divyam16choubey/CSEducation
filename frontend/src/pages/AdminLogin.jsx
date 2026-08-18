@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginAdmin } from "../api/adminService";
 import useDocTitle from "../hooks/useDocTitle";
 import toast from "react-hot-toast";
 import { IconShield } from "../components/icons";
+import Logo from "../components/Logo";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -12,6 +13,12 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useDocTitle("Admin Login");
+
+  useEffect(() => {
+    if (localStorage.getItem("adminToken")) {
+      navigate("/admin/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,11 +47,8 @@ export default function AdminLogin() {
       >
         <div className="card-static">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-primary-600
-              flex items-center justify-center text-white shadow-lg"
-              style={{ boxShadow: "0 8px 24px rgba(79, 70, 229, 0.25)" }}
-            >
-              <IconShield size={24} />
+            <div className="flex justify-center mb-4">
+              <Logo variant="icon" size={48} />
             </div>
             <h1 className="text-h2 text-heading dark:text-heading-dark">Admin Login</h1>
             <p className="text-body-sm text-subtle dark:text-subtle-dark mt-1">

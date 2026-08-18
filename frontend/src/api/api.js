@@ -21,9 +21,16 @@ API.interceptors.request.use((config) => {
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
     const message =
       error.response?.data?.message || error.message || "Something went wrong";
-    return Promise.reject({ message, status: error.response?.status });
+
+    // Auto-clear invalid or expired token on 401
+    if (status === 401 && localStorage.getItem("adminToken")) {
+      localStorage.removeItem("adminToken");
+    }
+
+    return Promise.reject({ message, status });
   }
 );
 

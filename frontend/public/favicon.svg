@@ -1,15 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none">
-  <!-- Book shape -->
-  <path d="M6 12C6 10.3431 7.34315 9 9 9H21C22.6569 9 24 10.3431 24 12V40C24 38.3431 22.6569 37 21 37H9C7.34315 37 6 35.6569 6 34V12Z" fill="#4f46e5" opacity="0.15"/>
-  <path d="M42 12C42 10.3431 40.6569 9 39 9H27C25.3431 9 24 10.3431 24 12V40C24 38.3431 25.3431 37 27 37H39C40.6569 37 42 35.6569 42 34V12Z" fill="#4f46e5" opacity="0.15"/>
-  <path d="M6 12C6 10.3431 7.34315 9 9 9H21C22.6569 9 24 10.3431 24 12V40C24 38.3431 22.6569 37 21 37H9C7.34315 37 6 35.6569 6 34V12Z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M42 12C42 10.3431 40.6569 9 39 9H27C25.3431 9 24 10.3431 24 12V40C24 38.3431 25.3431 37 27 37H39C40.6569 37 42 35.6569 42 34V12Z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Code brackets -->
-  <path d="M18 18L13 23L18 28" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M30 18L35 23L30 28" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="26" y1="17" x2="22" y2="29" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
-  <!-- Graduation cap -->
-  <path d="M24 3L14 7.5L24 12L34 7.5L24 3Z" fill="#4f46e5"/>
-  <path d="M18 9.5V13C18 13 20 15 24 15C28 15 30 13 30 13V9.5" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <line x1="34" y1="7.5" x2="34" y2="14" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="cse-favicon-grad" x1="10%" y1="90%" x2="90%" y2="10%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="45%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+  </defs>
+
+  <!-- Orbit / Swoosh -->
+  <path
+    d="M 14 72 C 17 86.5 35 93 55 90 C 76 87 90 73 90 47 C 90 29 82 18 71 15.5"
+    stroke="url(#cse-favicon-grad)"
+    stroke-width="7"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Graduation Cap - Mortarboard Diamond -->
+  <path
+    d="M 46.5 17.2 C 48.6 16.2 51.4 16.2 53.5 17.2 L 79.5 28.5 C 81.8 29.5 81.8 32.5 79.5 33.5 L 53.5 44.8 C 51.4 45.8 48.6 45.8 46.5 44.8 L 20.5 33.5 C 18.2 32.5 18.2 29.5 20.5 28.5 Z"
+    fill="url(#cse-favicon-grad)"
+  />
+
+  <!-- Cap Under-structure (Skull cap) -->
+  <path
+    d="M 32 37.5 C 32 46.5 40 51 50 51 C 60 51 68 46.5 68 37.5 C 65 42.5 58 46 50 46 C 42 46 35 42.5 32 37.5 Z"
+    fill="url(#cse-favicon-grad)"
+  />
+
+  <!-- Tassel -->
+  <path
+    d="M 23 30.5 C 20 33 18 39 18 45"
+    stroke="url(#cse-favicon-grad)"
+    stroke-width="3"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <ellipse cx="18" cy="47.5" rx="2.5" ry="3.5" fill="url(#cse-favicon-grad)" />
+
+  <!-- Code brackets </> -->
+  <!-- Left bracket < -->
+  <path
+    d="M 35 58 L 25 66.5 L 35 75"
+    stroke="url(#cse-favicon-grad)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Slash / -->
+  <path
+    d="M 54.5 55 L 45.5 78"
+    stroke="url(#cse-favicon-grad)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+  />
+
+  <!-- Right bracket > -->
+  <path
+    d="M 65 58 L 75 66.5 L 65 75"
+    stroke="url(#cse-favicon-grad)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>

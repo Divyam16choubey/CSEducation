@@ -114,7 +114,10 @@ export default function SubjectPage() {
   }
 
   const hasResources = sections.length > 0;
-  const error = !hasResources ? subjectError || resourcesError : resourcesError;
+  const isNotFound = subjectError?.toLowerCase().includes("not found");
+  const error = !hasResources
+    ? (isNotFound ? (resourcesError?.toLowerCase().includes("not found") ? null : resourcesError) : (subjectError || resourcesError))
+    : resourcesError;
 
   /* ── Tab state ── */
   const [activeTab, setActiveTab] = useState(null);

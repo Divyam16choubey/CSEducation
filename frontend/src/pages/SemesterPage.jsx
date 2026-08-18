@@ -19,9 +19,6 @@ const sectionConfig = {
 };
 
 // ── Helpers ──
-const buildSubjects = (names, type) =>
-  names.map((name) => ({ name, type }));
-
 const countResources = (s) => {
   let count = 0;
   if (s.notesLinks) count += s.notesLinks.length;
@@ -37,31 +34,46 @@ const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 export default function SemesterPage() {
   const { id } = useParams();
   const semId = Number(id);
-  const { data, loading, error, refetch } = useApi(() => getSubjects(id), [id]);
-  const { data: subjectData } = useApi(() => fetchSemesterSubjects(id), [id]);
+  const { data, loading, error, refetch } = useApi(() => fetchSemesterSubjects(id), [id]);
   useDocTitle(`Semester ${ROMAN[semId - 1] || id}`);
 
   const resourceCountMap = {};
-  if (subjectData && subjectData.length > 0) {
-    subjectData.forEach((s) => {
-      if (s.subjectSlug) {
-        resourceCountMap[s.subjectSlug] = countResources(s);
+  if (data && data.length > 0) {
+    data.forEach((s) => {
+      const slug = s.subjectSlug || toSlug(s.subjectName || s.name);
+      if (slug) {
+        resourceCountMap[slug] = countResources(s);
       }
     });
   }
 
-  const hasApiData = data && data.length > 0;
   const localConfig = semesterSubjects[semId] || { theory: [], lab: [] };
 
   const sections = Object.entries(sectionConfig)
     .map(([key, cfg]) => {
-      const localNames = localConfig[key];
-      if (!localNames) return null;
+      const localNames = localConfig[key] || [];
+      const apiMatches = (data || []).filter((s) => {
+        const type = (s.subjectType || s.type || "").toLowerCase();
+        return type === key.toLowerCase();
+      });
 
-      const subjects = hasApiData
-        ? data.filter((s) => s.type === cfg.label.split(" ")[0])
-        : buildSubjects(localNames, cfg.label);
+      let subjects = [];
+      if (apiMatches.length > 0) {
+        subjects = apiMatches.map((s) => ({
+          _id: s._id,
+          name: s.subjectName || s.name,
+          slug: s.subjectSlug || toSlug(s.subjectName || s.name),
+          type: cfg.badge,
+        }));
+      } else if (localNames.length > 0) {
+        subjects = localNames.map((name) => ({
+          name,
+          slug: toSlug(name),
+          type: cfg.badge,
+        }));
+      }
 
+      if (subjects.length === 0) return null;
       return { key, ...cfg, subjects };
     })
     .filter(Boolean);

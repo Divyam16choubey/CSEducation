@@ -11,6 +11,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const isAdmin = !!localStorage.getItem("adminToken");
 
   const semRef = useRef(null);
   const pyqRef = useRef(null);
@@ -233,10 +234,16 @@ export default function Navbar() {
             </motion.span>
           </button>
 
-          {/* Admin login */}
-          <Link to="/admin/login" className="btn-primary btn-sm ml-1.5">
-            Admin Login
-          </Link>
+          {/* Admin CTA */}
+          {isAdmin ? (
+            <Link to="/admin/dashboard" className="btn-primary btn-sm ml-1.5">
+              Dashboard
+            </Link>
+          ) : (
+            <Link to="/admin/login" className="btn-primary btn-sm ml-1.5">
+              Admin Login
+            </Link>
+          )}
         </div>
       </div>
 
@@ -305,9 +312,15 @@ export default function Navbar() {
                 >
                   {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
                 </button>
-                <Link to="/admin/login" className="btn-primary btn-sm flex-1 text-center">
-                  Admin Login
-                </Link>
+                {isAdmin ? (
+                  <Link to="/admin/dashboard" className="btn-primary btn-sm flex-1 text-center">
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link to="/admin/login" className="btn-primary btn-sm flex-1 text-center">
+                    Admin Login
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>
