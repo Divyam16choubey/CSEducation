@@ -134,7 +134,7 @@ export default function Footer() {
               transition-colors duration-200"
             aria-label="Back to top"
           >
-            Back to top
+            Back to front
             <IconArrowRight size={12} className="rotate-[-90deg]" />
           </button>
         </div>
