@@ -56,13 +56,31 @@ export default function About() {
             viewport={{ once: true }} transition={{ delay: 0.15, duration: 0.4 }}
             className="card-static max-w-narrow mx-auto"
           >
-            <p className="text-body text-subtle dark:text-subtle-dark leading-relaxed">
-              CSE students often struggle to find organized study materials. Notes are shared in
-              WhatsApp groups that get buried, PYQs are scattered across Google Drives, and
-              reference links are lost in browser bookmarks. There is no single, reliable source
-              for all academic resources. <strong className="text-heading dark:text-heading-dark">CSEducation</strong> solves this by providing a
-              centralized, well-organized, and always-accessible academic portal.
-            </p>
+            <div className="space-y-4">
+              <p className="text-body text-subtle dark:text-subtle-dark leading-relaxed mb-4">
+                CSE students often struggle to find organized study materials. Notes are shared in
+                WhatsApp groups that get buried, PYQs are scattered across Google Drives, and
+                reference links are lost in browser bookmarks. There is no single, reliable source
+                for all academic resources. Built around the academic structure of the CSE curriculum,
+                <strong className="text-heading dark:text-heading-dark"> CSEducation</strong> brings syllabus-related notes, PYQs, and learning
+                resources together so students can find and navigate what they need more easily.
+              </p>
+            </div>
+
+            <div>
+              {/* <h3 className="text-h4 text-heading dark:text-heading-dark mb-3">Built Around the CSE Syllabus</h3> */}
+              <p className="text-body text-subtle dark:text-subtle-dark leading-relaxed">
+                CSEducation was designed and developed with reference to the Computer Science &amp;
+                Engineering syllabus provided in this curriculum <a
+                  href="https://drive.google.com/file/d/1ubecR79cCbw8eAqERheoa54VEkMOFFjr/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 font-medium hover:underline">PDF</a> .
+                The syllabus was used as the
+                academic reference for organizing semesters, subjects, notes, learning resources,
+                and previous-year questions.
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
