@@ -119,17 +119,17 @@ exports.getResources = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Invalid subject identifier" });
     }
 
-    const subjectName = subjectId.replace(/-/g, " ");
+    const subjectPattern = subjectId
+      .split("-")
+      .map(escapeRegex)
+      .join("[^a-zA-Z0-9]+");
+
     const resources = await Resource.find({
-      $or: [
-        { subject: new RegExp(`^${escapeRegex(subjectId)}$`, "i") },
-        { subject: new RegExp(`^${escapeRegex(subjectName)}$`, "i") },
-      ],
+      subject: new RegExp(`^${subjectPattern}$`, "i"),
     }).sort({
       type: 1,
       title: 1,
     });
-
     res.json(resources);
   } catch (error) {
     next(error);
