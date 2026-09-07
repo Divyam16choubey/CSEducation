@@ -116,5 +116,18 @@ export const toSlug = (name) =>
     (name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /** Convert URL slug → display name: "oops-with-java" → "Oops With Java" */
-export const toDisplayName = (slug) =>
-    slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+export const toDisplayName = (slug) => {
+    // Reverse lookup for exact formatting
+    for (const semesterId in semesterSubjects) {
+        const categories = semesterSubjects[semesterId];
+        for (const category in categories) {
+            for (const subjectName of categories[category]) {
+                if (toSlug(subjectName) === slug) {
+                    return subjectName;
+                }
+            }
+        }
+    }
+    // Fallback for unknown slugs
+    return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};

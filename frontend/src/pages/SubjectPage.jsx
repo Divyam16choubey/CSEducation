@@ -13,6 +13,7 @@ import {
   IconNotes, IconTeacher, IconPYQ, IconBooks, IconLink,
   IconGlobe, IconYoutube, IconEmptyState, IconAlertCircle, IconArrowRight,
 } from "../components/icons";
+import { toDisplayName } from "../data/semesterSubjects";
 
 /* ── Resource section config ── */
 const typeConfig = {
@@ -45,7 +46,7 @@ const getReferenceIcon = (url) => {
 
 export default function SubjectPage() {
   const { id } = useParams();
-  const displayName = id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const displayName = toDisplayName(id);
   const { data: subject, loading: subjectLoading, error: subjectError } = useApi(() => fetchSubjectBySlug(id), [id]);
   const { data: uploadedResources, loading: resourcesLoading, error: resourcesError, refetch } = useApi(() => getResources(id), [id]);
   const loading = subjectLoading || resourcesLoading;
