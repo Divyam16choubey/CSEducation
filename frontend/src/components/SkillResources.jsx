@@ -56,6 +56,7 @@ const skillResources = [
         label: "Namaste JavaScript",
         url: "https://youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP&si=AVG6I_4UWYe6txqq",
         thumbnailVideoId: "pN6jk0uUrD8",
+        defaultQuality: "hqdefault",
       },
     ],
   },
@@ -138,13 +139,27 @@ function getThumbVideoId(resource) {
 const THUMB_QUALITIES = ["maxresdefault", "hqdefault"];
 
 function SkillThumbnail({ resource, skillTitle }) {
-  const [qualityIdx, setQualityIdx] = useState(0);
+  const initialQuality = resource.defaultQuality || "maxresdefault";
+  const initialQualityIdx = Math.max(0, THUMB_QUALITIES.indexOf(initialQuality));
+  const [qualityIdx, setQualityIdx] = useState(initialQualityIdx);
   const [allFailed, setAllFailed] = useState(false);
 
   const thumbVideoId = getThumbVideoId(resource);
 
-  /* No video ID at all → immediate fallback */
-  if (!thumbVideoId || allFailed) {
+  /* No video ID at all or all attempts failed → branded fallback */
+  if ((!thumbVideoId && !resource.thumbnailUrl) || allFailed) {
+    if (skillTitle === "JavaScript") {
+      return (
+        <div className="skill-thumb-placeholder">
+          <div className="w-12 h-12 rounded-xl bg-amber-400/20 text-amber-500 dark:bg-amber-400/20 dark:text-amber-400 font-bold flex items-center justify-center text-xl mb-1 shadow-sm border border-amber-400/30">
+            JS
+          </div>
+          <span className="skill-thumb-placeholder-label">JavaScript</span>
+          <span className="skill-thumb-placeholder-sub">Namaste JavaScript</span>
+        </div>
+      );
+    }
+
     return (
       <div className="skill-thumb-placeholder">
         <div className="skill-thumb-placeholder-icon">
@@ -156,8 +171,10 @@ function SkillThumbnail({ resource, skillTitle }) {
     );
   }
 
-  const quality = THUMB_QUALITIES[qualityIdx];
-  const thumbnailUrl = `https://img.youtube.com/vi/${thumbVideoId}/${quality}.jpg`;
+  const quality = THUMB_QUALITIES[qualityIdx] || "hqdefault";
+  const thumbnailUrl =
+    resource.thumbnailUrl ||
+    (thumbVideoId ? `https://img.youtube.com/vi/${thumbVideoId}/${quality}.jpg` : null);
 
   const handleError = () => {
     if (qualityIdx + 1 < THUMB_QUALITIES.length) {
@@ -171,6 +188,7 @@ function SkillThumbnail({ resource, skillTitle }) {
 
   return (
     <img
+      key={thumbnailUrl}
       src={thumbnailUrl}
       alt={`${skillTitle} — ${resource.label}`}
       className="skill-thumb-img"
