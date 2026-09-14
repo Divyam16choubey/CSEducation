@@ -29,6 +29,7 @@ const skillResources = [
         type: "playlist",
         label: "Video Playlist",
         url: "https://youtube.com/playlist?list=PLu71SKxNbfoDBNF5s-WH6aLbthSEIMhMI&si=n-R9Lo5S6zMavoFE",
+        thumbnailVideoId: "XmLOwJHFHf0",
       },
     ],
   },
@@ -41,6 +42,7 @@ const skillResources = [
         type: "playlist",
         label: "Complete Playlist",
         url: "https://youtube.com/playlist?list=PL4-IK0AVhVjOJs_UjdQeyEZ_cmEV3uJvx&si=pfFqMlz10yfWnPUL",
+        thumbnailVideoId: "1L2YiWdaUDM",
       },
     ],
   },
@@ -53,6 +55,7 @@ const skillResources = [
         type: "playlist",
         label: "Namaste JavaScript",
         url: "https://youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP&si=AVG6I_4UWYe6txqq",
+        thumbnailVideoId: "pN6jk0uUrD8",
       },
     ],
   },
@@ -110,24 +113,38 @@ const skillResources = [
         type: "playlist",
         label: "Complete Playlist",
         url: "https://youtube.com/playlist?list=PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w&si=ar6l4mVnmkGMGhjB",
+        thumbnailVideoId: "tVzUXW6siu0",
       },
     ],
   },
 ];
 
 
-/* ── Thumbnail Component with Fallback ── */
+/* ── Thumbnail Component with Multi-Step Fallback ── */
+
+/**
+ * Resolves a thumbnail video ID from either `videoId` (direct videos)
+ * or `thumbnailVideoId` (playlists with a known representative video).
+ */
+function getThumbVideoId(resource) {
+  return resource.videoId || resource.thumbnailVideoId || null;
+}
+
+/**
+ * YouTube thumbnail quality ladder:
+ *   maxresdefault (1280×720) — not always available
+ *   hqdefault     (480×360)  — reliably available for all public videos
+ */
+const THUMB_QUALITIES = ["maxresdefault", "hqdefault"];
 
 function SkillThumbnail({ resource, skillTitle }) {
-  const [imgFailed, setImgFailed] = useState(false);
+  const [qualityIdx, setQualityIdx] = useState(0);
+  const [allFailed, setAllFailed] = useState(false);
 
-  /* Only video IDs can reliably produce thumbnails */
-  const thumbnailUrl = resource.videoId
-    ? `https://img.youtube.com/vi/${resource.videoId}/mqdefault.jpg`
-    : null;
+  const thumbVideoId = getThumbVideoId(resource);
 
-  if (!thumbnailUrl || imgFailed) {
-    /* Branded placeholder for playlists / failed thumbnails */
+  /* No video ID at all → immediate fallback */
+  if (!thumbVideoId || allFailed) {
     return (
       <div className="skill-thumb-placeholder">
         <div className="skill-thumb-placeholder-icon">
@@ -139,13 +156,26 @@ function SkillThumbnail({ resource, skillTitle }) {
     );
   }
 
+  const quality = THUMB_QUALITIES[qualityIdx];
+  const thumbnailUrl = `https://img.youtube.com/vi/${thumbVideoId}/${quality}.jpg`;
+
+  const handleError = () => {
+    if (qualityIdx + 1 < THUMB_QUALITIES.length) {
+      /* Try next quality level */
+      setQualityIdx((prev) => prev + 1);
+    } else {
+      /* All qualities exhausted → branded fallback */
+      setAllFailed(true);
+    }
+  };
+
   return (
     <img
       src={thumbnailUrl}
       alt={`${skillTitle} — ${resource.label}`}
       className="skill-thumb-img"
       loading="lazy"
-      onError={() => setImgFailed(true)}
+      onError={handleError}
     />
   );
 }
