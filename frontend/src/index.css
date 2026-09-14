@@ -1375,3 +1375,273 @@ html {
 :is(.dark) .rli-btn-danger:hover {
   color: #fca5a5;
 }
+
+
+/* =============================================================
+   HOMEPAGE — SKILL RESOURCES CAROUSEL
+   ============================================================= */
+
+/* ── Carousel Wrapper ── */
+.skill-carousel-wrapper {
+  position: relative;
+}
+
+.skill-carousel-nav {
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+@media (min-width: 768px) {
+  .skill-carousel-nav {
+    display: flex;
+  }
+}
+
+.skill-carousel-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+.skill-carousel-arrow:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.04);
+  box-shadow: var(--shadow-card-hover);
+}
+.skill-carousel-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+:is(.dark) .skill-carousel-arrow {
+  background: var(--color-surface-raised);
+  border-color: var(--color-border);
+}
+:is(.dark) .skill-carousel-arrow:hover:not(:disabled) {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-light);
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* ── Scrollable Track ── */
+.skill-carousel-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.skill-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+.skill-carousel-track:focus {
+  outline: none;
+}
+.skill-carousel-track:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-lg);
+}
+
+.skill-carousel-slide {
+  flex: 0 0 calc(100% - 16px);
+  scroll-snap-align: start;
+  min-width: 0;
+}
+@media (min-width: 640px) {
+  .skill-carousel-slide {
+    flex: 0 0 calc(50% - 10px);
+  }
+}
+@media (min-width: 1024px) {
+  .skill-carousel-slide {
+    flex: 0 0 calc(33.333% - 14px);
+  }
+}
+
+
+/* ── Skill Card ── */
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: all var(--transition-slow);
+}
+.skill-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+}
+:is(.dark) .skill-card {
+  background: var(--color-surface-raised);
+}
+
+/* ── Thumbnail Area ── */
+.skill-card-thumb-link {
+  display: block;
+  text-decoration: none;
+}
+.skill-card-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-surface-raised);
+}
+:is(.dark) .skill-card-thumb {
+  background: rgba(var(--color-primary-rgb), 0.06);
+}
+
+.skill-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+.skill-card:hover .skill-thumb-img {
+  transform: scale(1.04);
+}
+
+/* ── Play Overlay ── */
+.skill-card-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.skill-card:hover .skill-card-play-overlay {
+  opacity: 1;
+}
+.skill-card-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(var(--color-primary-rgb), 0.9);
+  color: white;
+  box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.35);
+  transition: transform var(--transition-base);
+}
+.skill-card:hover .skill-card-play-btn {
+  transform: scale(1.08);
+}
+
+/* ── Branded Placeholder ── */
+.skill-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-primary-rgb), 0.06) 0%,
+    rgba(168, 85, 247, 0.06) 100%
+  );
+  padding: 16px;
+}
+:is(.dark) .skill-thumb-placeholder {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-primary-rgb), 0.12) 0%,
+    rgba(168, 85, 247, 0.1) 100%
+  );
+}
+
+.skill-thumb-placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+:is(.dark) .skill-thumb-placeholder-icon {
+  background: rgba(var(--color-primary-rgb), 0.18);
+  color: var(--color-primary-light);
+}
+
+.skill-thumb-placeholder-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+.skill-thumb-placeholder-sub {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* ── Card Body ── */
+.skill-card-body {
+  padding: 16px 20px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── CTA Button ── */
+.skill-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(var(--color-primary-rgb), 0.06);
+  transition: all var(--transition-base);
+  text-decoration: none;
+  white-space: nowrap;
+  margin-top: auto;
+}
+.skill-card-cta:hover {
+  background: rgba(var(--color-primary-rgb), 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.15);
+}
+:is(.dark) .skill-card-cta {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary-light);
+}
+:is(.dark) .skill-card-cta:hover {
+  background: rgba(var(--color-primary-rgb), 0.18);
+}
+
+/* ── Line clamp utility ── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

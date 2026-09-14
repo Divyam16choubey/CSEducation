@@ -13,9 +13,9 @@ import {
   IconSemester,
   IconSubject,
   IconGraduation,
-  IconCode,
 } from "../components/icons";
 import Logo from "../components/Logo";
+import SkillResources from "../components/SkillResources";
 import useDocTitle from "../hooks/useDocTitle";
 
 /* ──────────────────────────────────────
@@ -38,12 +38,6 @@ const features = [
   { Icon: IconShield, title: "Admin Managed", desc: "Resources are managed by verified admins for quality control." },
   { Icon: IconMoon, title: "Dark Mode", desc: "Study comfortably in any lighting with theme support." },
   { Icon: IconGrid, title: "Mobile Friendly", desc: "Fully responsive design — access from any device, anywhere." },
-];
-
-const updates = [
-  { title: "DBMS Notes Added", desc: "Semester IV – Complete DBMS handwritten notes are now available.", isNew: true },
-  { title: "PYQs 2024 Uploaded", desc: "Latest Previous Year Question Papers for multiple subjects.", isNew: false },
-  { title: "New Reference Links", desc: "Curated YouTube playlists and websites for DSA and OS.", isNew: false },
 ];
 
 
@@ -371,51 +365,8 @@ export default function Home() {
       </section>
 
 
-      {/* ── Latest Updates ── */}
-      <section
-        className="py-20 md:py-24 px-6"
-        style={{ background: "var(--color-surface)" }}
-      >
-        <div className="max-w-content mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-          >
-            <h2 className="section-title">Latest Updates</h2>
-            <p className="section-subtitle mb-14">What's new on the platform</p>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6"
-          >
-            {updates.map((item, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                className="card-bordered group transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5"
-              >
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <h3 className="text-h4 text-heading dark:text-heading-dark">
-                    {item.title}
-                  </h3>
-                  {item.isNew && (
-                    <span className="badge badge-new flex-shrink-0">New</span>
-                  )}
-                </div>
-                <p className="text-body-sm text-subtle dark:text-subtle-dark leading-relaxed">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      {/* ── Learn More Skills (replaces Latest Updates) ── */}
+      <SkillResources />
 
 
       {/* ── CTA Section ── */}
