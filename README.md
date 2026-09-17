@@ -1,10 +1,10 @@
 # CSEducation — Theory Documentation
 
-> 🚀 **Live Deployment**: [http://65.2.153.155/](http://65.2.153.155/)
+> 🚀 **Live Deployment**: [https://www.cseducation.me/](https://www.cseducation.me/)
 
 ## 1. Project Overview
 
-**CSEducation** is a full-stack academic portal built using the **MERN Stack** (MongoDB, Express.js, React, Node.js), live deployed at **[http://65.2.153.155/](http://65.2.153.155/)**. It provides a centralized platform for Computer Science & Engineering students to access semester-wise notes, previous year question papers (PYQs), books, and curated reference materials.
+**CSEducation** is a full-stack academic portal built using the **MERN Stack** (MongoDB, Express.js, React, Node.js), live deployed at **[https://www.cseducation.me/](https://www.cseducation.me/)**. It provides a centralized platform for Computer Science & Engineering students to access semester-wise notes, previous year question papers (PYQs), books, and curated reference materials.
 
 The platform replaces the scattered, disorganized nature of academic resource sharing (via WhatsApp groups, Google Drive links, and personal folders) with a single, well-structured, and always-accessible web application.
 
@@ -456,7 +456,7 @@ npm start
 
 ### Production Deployment
 
-- **Live Deployed Application**: [http://65.2.153.155/](http://65.2.153.155/)
+- **Live Deployed Application**: [https://www.cseducation.me/](https://www.cseducation.me/)
 
 #### 1. Backend Deployment (Render)
 1. Push the repository to GitHub.
