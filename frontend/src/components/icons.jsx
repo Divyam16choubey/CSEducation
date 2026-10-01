@@ -10,6 +10,7 @@ const defaults = {
   width: 24,
   height: 24,
   viewBox: "0 0 24 24",
+  preserveAspectRatio: "xMidYMid meet",
   fill: "none",
   stroke: "currentColor",
   strokeWidth: 1.5,
@@ -19,12 +20,13 @@ const defaults = {
 };
 
 const I = (paths, extraProps = {}) => {
+  const { displayName = "Icon", ...svgProps } = extraProps;
   const Component = ({ size = 24, className = "", ...rest }) => (
-    <svg {...defaults} width={size} height={size} className={className} {...extraProps} {...rest}>
+    <svg {...defaults} width={size} height={size} className={className} {...svgProps} {...rest}>
       {paths}
     </svg>
   );
-  Component.displayName = extraProps.displayName || "Icon";
+  Component.displayName = displayName;
   return Component;
 };
 
@@ -412,4 +414,3 @@ export const IconVideo = I(
   </>,
   { displayName: "IconVideo" }
 );
-

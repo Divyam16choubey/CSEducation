@@ -38,7 +38,7 @@ export default function SemesterPage() {
   useDocTitle(`Semester ${ROMAN[semId - 1] || id}`);
 
   const resourceCountMap = {};
-  if (data && data.length > 0) {
+  if (Array.isArray(data) && data.length > 0) {
     data.forEach((s) => {
       const slug = s.subjectSlug || toSlug(s.subjectName || s.name);
       if (slug) {
@@ -52,7 +52,7 @@ export default function SemesterPage() {
   const sections = Object.entries(sectionConfig)
     .map(([key, cfg]) => {
       const localNames = localConfig[key] || [];
-      const apiMatches = (data || []).filter((s) => {
+      const apiMatches = (Array.isArray(data) ? data : []).filter((s) => {
         const type = (s.subjectType || s.type || "").toLowerCase();
         return type === key.toLowerCase();
       });

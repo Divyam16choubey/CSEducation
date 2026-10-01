@@ -11,7 +11,7 @@ const FALLBACK_YEARS = [2021, 2022, 2023, 2024, 2025, 2026];
 
 export default function PYQLanding() {
   const { data, loading, error, refetch } = useApi(() => getPYQYears(), []);
-  const years = data && data.length > 0 ? data : FALLBACK_YEARS;
+  const years = Array.isArray(data) && data.length > 0 ? data : FALLBACK_YEARS;
   useDocTitle("Previous Year Questions");
 
   return (

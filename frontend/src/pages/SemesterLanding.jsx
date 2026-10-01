@@ -39,7 +39,7 @@ const breadcrumbItems = [
 
 export default function SemesterLanding() {
   const { data, loading, error, refetch } = useApi(() => getSemesters(), []);
-  const semesters = data && data.length > 0 ? data : FALLBACK_SEMESTERS;
+  const semesters = Array.isArray(data) && data.length > 0 ? data : FALLBACK_SEMESTERS;
   useDocTitle("Semesters");
 
   return (

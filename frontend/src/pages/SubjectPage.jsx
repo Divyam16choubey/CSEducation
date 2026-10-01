@@ -100,7 +100,7 @@ export default function SubjectPage() {
     }
   }
 
-  if (uploadedResources && uploadedResources.length > 0) {
+  if (Array.isArray(uploadedResources) && uploadedResources.length > 0) {
     uploadedResources.forEach((resource) => {
       const sectionKey = resourceTypeToSection[resource.type];
       if (!sectionKey) return;

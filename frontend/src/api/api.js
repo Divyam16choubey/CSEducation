@@ -19,9 +19,24 @@ API.interceptors.request.use((config) => {
 
 // Global error handler
 API.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // If server returned an HTML document instead of JSON (e.g. Vite SPA fallback when backend proxy is missing)
+    const contentType = response.headers?.["content-type"] || "";
+    if (
+      typeof response.data === "string" &&
+      (contentType.includes("text/html") ||
+        response.data.trim().startsWith("<!DOCTYPE") ||
+        response.data.trim().startsWith("<html"))
+    ) {
+      return Promise.reject({
+        message: "Invalid API response: received HTML document instead of expected JSON data",
+        status: response.status,
+      });
+    }
+    return response;
+  },
   (error) => {
-    const status = error.response?.status;
+    const status = error.response?.status || error.status;
     const message =
       error.response?.data?.message || error.message || "Something went wrong";
 

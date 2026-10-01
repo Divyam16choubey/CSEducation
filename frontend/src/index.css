@@ -701,8 +701,13 @@ html {
      ICON CONTAINER
      ====================== */
 
-  .icon-container {
+  .icon-container,
+  .icon-container-sm,
+  .icon-container-lg {
     @apply flex items-center justify-center flex-shrink-0;
+  }
+
+  .icon-container {
     width: 44px;
     height: 44px;
     border-radius: var(--radius-lg);

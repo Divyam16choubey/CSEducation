@@ -20,7 +20,7 @@ export default function PYQPage() {
   ];
 
   const grouped = {};
-  if (data && data.length > 0) {
+  if (Array.isArray(data) && data.length > 0) {
     data.forEach((pyq) => {
       const sem = pyq.semester || 0;
       if (!grouped[sem]) grouped[sem] = [];
@@ -64,7 +64,7 @@ export default function PYQPage() {
             </div>
           )}
 
-          {!loading && data && data.length > 0 && (
+          {!loading && Array.isArray(data) && data.length > 0 && (
             <div className="space-y-10">
               {Object.entries(grouped)
                 .sort(([a], [b]) => Number(a) - Number(b))
@@ -99,7 +99,7 @@ export default function PYQPage() {
             </div>
           )}
 
-          {!loading && (!data || data.length === 0) && (
+          {!loading && !error && (!data || data.length === 0) && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-center py-16"
             >
